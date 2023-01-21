@@ -5,7 +5,6 @@ import path, { dirname } from 'path';
 import { fileURLToPath } from 'url'
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = dirname(__filename)
-console.log(__filename, __dirname)
 const fsPromises = fs.promises;
 const logEvents = async (message, logName) => {
   const dateTime = `${format(new Date(), 'yyyyMMdd\tHH:mm:ss')}`;

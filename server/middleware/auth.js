@@ -1,4 +1,5 @@
 import UserModel from "../model/userModel.js";
+import bcrypt from "bcrypt";
 
 const checkDuplicateUsernameOrEmail = (req, res, next) => {
   const { userName, email, password } = req.body;
@@ -21,4 +22,22 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
   });
 };
 
-export { checkDuplicateUsernameOrEmail }
+const checkAvailableUser = async (req, res, next) => {
+  const { email, password } = req.body;
+  console.log(req.body)
+  console.log(email, password)
+  if (!email || !password) return res.status(400).json({ 'message': 'Email and password are required.' });
+
+  const foundUser = await UserModel.findOne({ email }).exec();
+  if (!foundUser) return res.status(401).json({ "status": "unsuccess", message: "Your email or password is wrong!." }); //Unauthorized 
+
+  const match = await bcrypt.compare(password, foundUser.password);
+  if (match) {
+    req.foundUser = foundUser;
+    next();
+  } else {
+    return res.status(401).json({ "status": "unsuccess", message: "Your email or password is wrong!." });
+  }
+}
+
+export { checkDuplicateUsernameOrEmail, checkAvailableUser }
