@@ -2,34 +2,48 @@ import express from "express";
 import bodyParser from "body-parser";
 import cors from "cors";
 import dotenv from "dotenv";
-import corsOptions from "./config/corsOptions";
-import credentials from "./middleware/credentials";
-import { connection } from "mongoose";
-import connectDB from "./config/DBConn";
-import { logger } from "./middleware/logEvents";
+import mongoose from "mongoose";
+import corsOptions from "./config/corsOptions.js";
+import credentials from "./middleware/credentials.js";
+import { logger } from "./middleware/logEvents.js";
+import userRoutes from "./routes/userRoutes.js";
+import cookieParser from "cookie-parser";
+
 
 dotenv.config();
-const PORT = process.env.PORT || 9000;
 const app = express();
-
-connectDB();
 
 app.use(logger)
 app.use(credentials);
 
 app.use(cors(corsOptions));
+app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(express.json());
-app.use(bodyParser.json());
 app.use(cookieParser());
 
 //routes
-
+app.use("/api", userRoutes)
 
 // routes need to jwt verify
 
-connection.once('open', () => {
-  console.log('Connected to MongoDB');
-  app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-});
+const PORT = process.env.PORT || 9000;
+mongoose
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    dbName: process.env.DATABASE_NAME
+  })
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
 
+    /* ONLY ADD DATA ONE TIME */
+    // AffiliateStat.insertMany(dataAffiliateStat);
+    // OverallStat.insertMany(dataOverallStat);
+    // Product.insertMany(dataProduct);
+    // ProductStat.insertMany(dataProductStat);
+    // Transaction.insertMany(dataTransaction);
+    // User.insertMany(dataUser);
+  })
+  .catch((error) => console.log(`${error} did not connect`));
