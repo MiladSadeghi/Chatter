@@ -24,8 +24,6 @@ const checkDuplicateUsernameOrEmail = (req, res, next) => {
 
 const checkAvailableUser = async (req, res, next) => {
   const { email, password } = req.body;
-  console.log(req.body)
-  console.log(email, password)
   if (!email || !password) return res.status(400).json({ 'message': 'Email and password are required.' });
 
   const foundUser = await UserModel.findOne({ email }).exec();
