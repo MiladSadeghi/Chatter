@@ -9,9 +9,9 @@ const handleLogin = async (req, res) => {
     const { accessToken, refreshToken } = await generateTokens(foundUser);
     if (cookies?.jwt) {
       console.log(1)
-      // res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true });
+      res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' });
     }
-    res.cookie('jwt', refreshToken, { httpOnly: true, secure: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
     res.status(201).json({ accessToken })
   } catch (error) {
     res.sendStatus(401);
