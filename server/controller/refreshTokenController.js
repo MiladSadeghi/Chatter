@@ -1,4 +1,3 @@
-import verifyRefreshToken from "../utils/verifyRefreshToken.js";
 import jwt from "jsonwebtoken";
 import UserToken from "../model/UserToken.js";
 import UserModel from "../model/userModel.js";
@@ -20,10 +19,9 @@ const handleRefreshToken = async (req, res) => {
     return res.sendStatus(403);
   }
 
-  const newRefreshToken = await generateTokens(foundUser);
   jwt.verify(refreshToken, process.env.REFRESH_TOKEN, async (err, decoded) => {
     if (err) {
-      userToken.token = newRefreshToken;
+      userToken.token = "";
       await userToken.save();
     }
     if (err || !foundUser._id.equals(decoded._id)) return res.sendStatus(403);

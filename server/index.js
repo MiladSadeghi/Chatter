@@ -8,6 +8,8 @@ import credentials from "./middleware/credentials.js";
 import { logger } from "./middleware/logEvents.js";
 import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
+import verifyJWT from "./middleware/verifyJWT.js";
+import roomRoutes from "./routes/roomRoutes.js";
 
 
 dotenv.config();
@@ -26,6 +28,8 @@ app.use(cookieParser());
 app.use("/api", userRoutes)
 
 // routes need to jwt verify
+
+app.use("/api/", roomRoutes);
 
 const PORT = process.env.PORT || 9000;
 mongoose
