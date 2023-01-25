@@ -25,26 +25,6 @@ const createRoom = async (req, res) => {
   }
 }
 
-const getUserRooms = async (req, res) => {
-  const { userName, userID } = req;
-  if (!userName || !userID) return res.status(406).json({ status: "error", message: "something missed!" })
-
-  const rooms = await RoomModel.find({ "users.userId": userID });
-  const users = await UserModel.find({});
-  if (!rooms) res.sendStatus(404);
-  rooms.forEach(room => {
-    room.users.forEach(roomUser => {
-      users.forEach(user => {
-        if (user._id.equals(roomUser.userId)) {
-          roomUser.userName = user.userName;
-        }
-      })
-    })
-  })
-
-  res.status(200).json(rooms)
-}
-
 const deleteRoom = async (req, res) => {
   const { room } = req;
   room.delete((error, result) => {
@@ -124,4 +104,4 @@ const addUserToRoomBlacklist = async (req, res) => {
   });
 }
 
-export { createRoom, getUserRooms, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist };
+export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist };
