@@ -1,0 +1,91 @@
+@font-face {
+  font-family: "DM Sans";
+  src: url("./DM_Sans/DMSans-Regular.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("./DM_Sans/DMSans-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "DM Sans";
+  src: url("./DM_Sans/DMSans-Bold.ttf") format("truetype");
+  font-weight: bold;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url("./Inter/Inter-VariableFont_slnt\,wght.ttf") format("truetype");
+  font-weight: 100 1000;
+  font-stretch: 0% 200%;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Ultralight.woff") format("woff");
+  font-weight: 100;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Thin.woff") format("woff");
+  font-weight: 200;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Light.woff") format("woff");
+  font-weight: 300;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Regular.woff") format("woff");
+  font-weight: 400;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Medium.woff") format("woff");
+  font-weight: 500;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Semibold.woff") format("woff");
+  font-weight: 600;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Bold.woff") format("woff");
+  font-weight: 700;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Heavy.woff") format("woff");
+  font-weight: 800;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "SF Pro";
+  src: url("./SF_Pro/SF-Pro-Display-Black.woff") format("woff");
+  font-weight: 900;
+  font-style: normal;
+}
