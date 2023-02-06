@@ -8,7 +8,7 @@ import Main from "./components/Main";
 const Home = () => {
   return (
     <RouteWrapper>
-      <Wrapper className="mb-[580px] h-[1280px] bg-header pb-[400px]">
+      <Wrapper className="bg-header">
         <Navbar />
         <Header />
       </Wrapper>
@@ -17,6 +17,6 @@ const Home = () => {
   );
 };
 
-const Wrapper = tw.div`h-full bg-cover bg-no-repeat`;
+const Wrapper = tw.div`h-full bg-cover bg-no-repeat pb-[400px] mb-[580px] h-[1280px]`;
 
 export default Home;

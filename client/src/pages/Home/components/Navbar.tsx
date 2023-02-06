@@ -7,7 +7,7 @@ const Navbar = () => {
     <Wrapper>
       <Chatter className="">Chatter</Chatter>
       <LoginButton>
-        <Link to={"/login"}>Login / Sign up</Link>
+        <Link to={"/sign-in"}>Login / Sign up</Link>
       </LoginButton>
     </Wrapper>
   );

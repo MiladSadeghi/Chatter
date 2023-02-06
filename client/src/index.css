@@ -2,3 +2,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer utilities {
+  .bg-clip {
+    clip-path: polygon(100% 100%, 0% 100%, 0% 20%, 100% 80%);
+  }
+  .border-clip {
+    clip-path: polygon(98% 81%, 2% 23%, 2% 21.2%, 98% 79%);
+  }
+  .cutter-clip {
+    clip-path: polygon(88% 76%, 12% 30%, 12% 27%, 88% 72.9%);
+  }
+}

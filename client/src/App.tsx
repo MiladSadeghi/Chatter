@@ -13,8 +13,8 @@ function App() {
       <Provider store={store}>
         <GlobalReset />
         <GlobalTypography />
-        <CustomToastContainer />
         <Routes />
+        <CustomToastContainer />
       </Provider>
     </BrowserRouter>
   );
