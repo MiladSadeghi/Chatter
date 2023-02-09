@@ -1,4 +1,6 @@
 import apiSlice from "../api/apiSlice";
+import { setCredentials } from "./authSlice";
+import jwt_decode from "jwt-decode";
 
 const authApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -16,11 +18,28 @@ const authApiSlice = apiSlice.injectEndpoints({
         body: { ...userCredentials }
       })
     }),
+    refresh: builder.mutation<any, void>({
+      query: () => ({
+        url: "api/auth/refresh",
+        method: "GET"
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          const { accessToken } = data
+          const decodedAccessToken: any = jwt_decode(accessToken);
+          dispatch(setCredentials({ accessToken, userName: decodedAccessToken.userName }))
+        } catch (err) {
+          console.log(err)
+        }
+      }
+    }),
   }),
   overrideExisting: true,
 })
 
 export const {
   useSignUpMutation,
-  useSignInMutation
+  useSignInMutation,
+  useRefreshMutation
 } = authApiSlice

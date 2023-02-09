@@ -7,16 +7,16 @@ import { SignInSchema } from "src/helpers/validation";
 import { Oval } from "react-loader-spinner";
 import { useSignInMutation } from "src/core/features/auth/authApiSlice";
 import { toast } from "react-toastify";
-
-type TFormValues = {
-  [T: string]: string;
-};
+import { setToken } from "src/core/features/auth/authSlice";
+import { useDispatch } from "react-redux";
+import { AppDispatch } from "src/core/store";
 
 const SignIn = () => {
   document.title = "Sign in";
   const navigate = useNavigate();
+  const dispatch: AppDispatch = useDispatch();
 
-  const initialValues: TFormValues = {
+  const initialValues: Record<string, string> = {
     email: "",
     password: "",
   };
@@ -25,11 +25,12 @@ const SignIn = () => {
 
   const submitForm = async () => {
     try {
-      await signIn({
+      const result = await signIn({
         email: values.email,
         password: values.password,
       }).unwrap();
       toast.success("Thanks for create account, please login to your account.");
+      dispatch(setToken(result));
       navigate("/");
     } catch (error: any) {
       if (error?.data?.data?.userName) {

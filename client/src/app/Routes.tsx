@@ -5,6 +5,10 @@ import { useLocation, Routes as RouterRoutes, Route } from "react-router-dom";
 import Account from "../common/Account";
 import SignIn from "src/pages/Sign in";
 import SignUp from "src/pages/Sign up";
+import Prefetch from "src/core/features/auth/Prefetch";
+import Layout from "src/common/Layout";
+import PersistLogin from "src/core/features/auth/PersistLogin";
+import Chat from "src/pages/Chat";
 
 const Routes = () => {
   const location = useLocation();
@@ -16,10 +20,29 @@ const Routes = () => {
   return (
     <AnimatePresence mode="wait">
       <RouterRoutes location={location} key={location.pathname}>
-        <Route path="/">
+        <Route path="/" element={<Layout />}>
           <Route index element={<Home />} />
-          <Route path="sign-in" element={<Account children={<SignIn />} />} />
-          <Route path="sign-up" element={<Account children={<SignUp />} />} />
+          <Route
+            path="sign-in"
+            element={
+              <Account>
+                <SignIn />
+              </Account>
+            }
+          />
+          <Route
+            path="sign-up"
+            element={
+              <Account>
+                <SignUp />
+              </Account>
+            }
+          />
+          <Route element={<PersistLogin />}>
+            <Route element={<Prefetch />}>
+              <Route path="/chat" element={<Chat />} />
+            </Route>
+          </Route>
         </Route>
       </RouterRoutes>
     </AnimatePresence>

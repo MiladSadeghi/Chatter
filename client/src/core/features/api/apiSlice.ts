@@ -13,14 +13,13 @@ const baseQuery = fetchBaseQuery({
 
 const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
   let result = await baseQuery(args, api, extraOptions);
-  console.log(result)
   if (result?.error?.status === 403) {
-    const refreshResult = await baseQuery('/refresh', api, extraOptions);
+    const refreshResult = await baseQuery('api/auth/refresh', api, extraOptions);
     if (refreshResult?.data) {
-      api.dispatch(setToken(refreshResult.data));
+      api.dispatch(setToken(refreshResult?.data));
       result = await baseQuery(args, api, extraOptions);
     } else {
-      await baseQuery('auth/logout', api, extraOptions);
+      await baseQuery('api/auth/logout', api, extraOptions);
       api.dispatch(logOut());
     }
   }
@@ -31,7 +30,7 @@ const apiSlice = createApi({
   reducerPath: "api",
   baseQuery: baseQueryWithReauth,
   endpoints: builder => ({}),
-  tagTypes: ["User", "Auth"],
+  tagTypes: ["User", "Auth", "Room", "Message"],
   keepUnusedDataFor: 5
 })
 
