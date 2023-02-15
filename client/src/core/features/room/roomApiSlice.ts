@@ -16,25 +16,25 @@ const roomApiSlice = apiSlice.injectEndpoints({
         body: { roomID }
       })
     }),
-    editRoomName: builder.mutation({
-      query: (userData: any) => ({
+    editRoomName: builder.mutation<any, any>({
+      query: ({ roomID, newRoomName }: { roomID: string, newRoomName: string }) => ({
         url: "api/room/delete",
         method: "POST",
-        body: { roomID: userData.roomID, newRoomName: userData.newRoomName }
+        body: { roomID, newRoomName }
       })
     }),
     inviteUser: builder.mutation({
-      query: (userData: any) => ({
+      query: ({ roomID, invitedUserId }: { roomID: string, invitedUserId: string }) => ({
         url: "api/room/invite",
         method: "PUT",
-        body: { roomID: userData.roomID, invitedUserId: userData.invitedUserId }
+        body: { roomID, invitedUserId }
       })
     }),
     bannedUser: builder.mutation({
-      query: (userData: any) => ({
+      query: ({ roomID, bannedUserId }: { roomID: string, bannedUserId: string }) => ({
         url: "api/room/blacklist",
         method: "PUT",
-        body: { roomID: userData.roomID, bannedUserId: userData.bannedUserId }
+        body: { roomID, bannedUserId }
       })
     })
   })

@@ -3,7 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { useRefreshMutation } from "./authApiSlice";
 import { useSelector } from "react-redux";
 import { selectCurrentToken } from "./authSlice";
-import Home from "src/pages/Home";
+import ChatLoader from "src/common/ChatLoader";
+
 const PersistLogin = () => {
   const token = useSelector(selectCurrentToken);
   const effectRan = useRef(false);
@@ -37,7 +38,7 @@ const PersistLogin = () => {
 
   let content: any;
   if (isLoading) {
-    content = <p>Loading...</p>;
+    content = <ChatLoader />;
   } else if (isSuccess && trueSuccess) {
     content = <Outlet />;
   } else if (token && isUninitialized) {

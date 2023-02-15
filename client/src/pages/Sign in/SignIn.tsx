@@ -29,9 +29,9 @@ const SignIn = () => {
         email: values.email,
         password: values.password,
       }).unwrap();
-      toast.success("Thanks for create account, please login to your account.");
+      toast.success("Welcome");
       dispatch(setToken(result));
-      navigate("/");
+      navigate("/chat");
     } catch (error: any) {
       if (error?.data?.data?.userName) {
         errors.userName = error?.data?.data?.userName;

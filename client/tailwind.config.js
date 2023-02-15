@@ -20,9 +20,12 @@ module.exports = {
         "my-light-white": "#f8fafc",
         "my-turquoise": "#5bf7db",
         "my-dark-gray": "#757575",
-        "my-light-purple": "#625BF7"
+        "my-light-purple": "#625BF7",
+      },
+      boxShadow: {
+        "to-r": "0px 0px 24px rgba(0, 0, 0, 0.08)"
       }
     },
   },
-  plugins: [],
+  plugins: [require('tailwind-scrollbar')({ nocompatible: true })],
 }
