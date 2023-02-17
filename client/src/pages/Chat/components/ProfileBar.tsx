@@ -3,7 +3,7 @@ import tw from "twin.macro";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 
 const ProfileBar = () => {
-  const userName = useSelector((state: any) => state.auth.currentUser);
+  const userName = useSelector((state: any) => state.user.userName);
 
   return (
     <Wrapper>

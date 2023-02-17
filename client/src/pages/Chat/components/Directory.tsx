@@ -17,7 +17,7 @@ const Directory = ({ Room }: { Room: IRoom }) => {
           Room Member <UserCountNumber>{Room.users.length}</UserCountNumber>
         </UserCount>
         {Room.users.map((user: TRoomUser) => (
-          <RoomMember>
+          <RoomMember key={user.userId}>
             <MemberAvatar />
             <MemberName>{user.userName}</MemberName>
           </RoomMember>

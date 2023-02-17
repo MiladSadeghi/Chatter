@@ -3,10 +3,10 @@ import apiSlice from "../api/apiSlice";
 const messageApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
     sendMessage: builder.mutation({
-      query: ({ roomID, senderID, message }: { roomID: string, message: string, senderID: string }) => ({
+      query: ({ roomID, message }: { roomID: string, message: string }) => ({
         url: `api/msg/${roomID}`,
         method: "POST",
-        body: { roomID, senderID, message }
+        body: { roomID, message }
       })
     }),
     getRoomsMessage: builder.mutation<any, void>({
@@ -15,7 +15,7 @@ const messageApiSlice = apiSlice.injectEndpoints({
         method: "GET"
       })
     }),
-    getRoomMessage: builder.mutation<any, void>({
+    getRoomMessage: builder.mutation<any, string>({
       query: (roomID) => ({
         url: `api/msg/${roomID}`,
         method: "GET"

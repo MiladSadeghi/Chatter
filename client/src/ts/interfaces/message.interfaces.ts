@@ -1,8 +1,9 @@
 export interface IMessage {
   _id: string,
   message: string,
-  sender: string,
+  senderID: string,
+  senderName: string,
   roomID: string,
   createdAt: Date,
-  updateAt: Date
+  updateAt: Date,
 }

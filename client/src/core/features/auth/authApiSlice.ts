@@ -1,6 +1,7 @@
 import apiSlice from "../api/apiSlice";
-import { setCredentials } from "./authSlice";
+import { setToken } from "./authSlice";
 import jwt_decode from "jwt-decode";
+import { setCredentials } from "../user/userSlice";
 
 const authApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -28,7 +29,9 @@ const authApiSlice = apiSlice.injectEndpoints({
           const { data } = await queryFulfilled;
           const { accessToken } = data
           const decodedAccessToken: any = jwt_decode(accessToken);
-          dispatch(setCredentials({ accessToken, userName: decodedAccessToken.userName }))
+          console.log(decodedAccessToken)
+          dispatch(setCredentials({ userID: decodedAccessToken._id, userName: decodedAccessToken.userName }))
+          dispatch(setToken({ accessToken }))
         } catch (err) {
           console.log(err)
         }

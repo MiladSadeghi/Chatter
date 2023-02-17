@@ -6,7 +6,9 @@ type TIS = {
   rooms: IRoom[],
   inviteList: Array<string>,
   selectedRoomID: null | string,
-  directoryIsOpen: Boolean
+  directoryIsOpen: Boolean,
+  userName: string,
+  userID: string
 }
 
 const initialState: TIS = {
@@ -14,6 +16,8 @@ const initialState: TIS = {
   inviteList: [],
   selectedRoomID: null,
   directoryIsOpen: false,
+  userName: "",
+  userID: ""
 }
 
 const userSlice = createSlice({
@@ -31,9 +35,14 @@ const userSlice = createSlice({
     },
     setDirectory: (state, action) => {
       state.directoryIsOpen = action.payload;
+    },
+    setCredentials: (state, action) => {
+      const { payload } = action;
+      state.userName = payload.userName;
+      state.userID = payload.userID;
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials } = userSlice.actions;
 export default userSlice.reducer;
