@@ -9,6 +9,7 @@ const createRoom = async (req, res) => {
     const roomName = body.name;
     const ownerUser = {
       userId: userID,
+      userName: userName,
       role: "1769"
     }
     const roomData = {
@@ -44,7 +45,7 @@ const editRoomName = async (req, res) => {
 
 const inviteUserToRoom = async (req, res) => {
   const { room, body } = req;
-  const { invitedUserId } = body;
+  const { invitedUserId, invitedUserName } = body;
 
   let isUserOnInviteList = false;
   let isUserOnBlackList = false;
@@ -82,7 +83,8 @@ const inviteUserToRoom = async (req, res) => {
   if (!isUserOnInviteList &&
     !isUserOnBlackList &&
     !isAlreadyJoined) {
-    room.inviteList.push(invitedUserId)
+    const invitedUser = await UserModel.find({ _id: invitedUserId }).select("name _id")
+    room.inviteList.push({ id: invitedUser[0]._id, name: invitedUser[0].name })
     room.save((err) => {
       if (err) return res.status(408).json({ status: "error", message: "cant invite user" });
       return res.status(200).json({ status: "success", message: "user invited" });
@@ -92,7 +94,7 @@ const inviteUserToRoom = async (req, res) => {
 
 const addUserToRoomBlacklist = async (req, res) => {
   const { room, body } = req;
-  const { bannedUserId } = body;
+  const { bannedUserId, bannedUserName } = body;
 
   const isKicked = kickUser(room, bannedUserId);
   if (!isKicked) return res.status(408).json({ status: "error", message: "cant kick this user from the room" });

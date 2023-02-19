@@ -5,39 +5,22 @@ import generateTokens from "../utils/generateTokens.js";
 
 const handleRefreshToken = async (req, res) => {
   const cookies = req.cookies;
-  console.log(cookies)
-  if (!cookies?.jwt) return res.sendStatus(401);
+  if (!cookies?.jwt) return res.status(401).json({ message: 'Unauthorized' })
   const refreshToken = cookies.jwt;
-  res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' });
-  const userToken = await UserToken.findOne({ refreshToken }).exec();
-  const foundUser = await UserModel.findOne({ _id: userToken.userId });
+  jwt.verify(
+    refreshToken,
+    process.env.REFRESH_TOKEN,
+    async (err, decoded) => {
+      if (err) return res.status(403).json({ message: 'Forbidden' })
+      const foundUser = await UserModel.findOne({ _id: decoded._id, userName: decoded.userName }).exec();
 
-  if (!userToken) {
-    jwt.verify(refreshToken, process.env.REFRESH_TOKEN, async (err, decoded) => {
-      if (err) return res.sendStatus(403);
-      await userToken.delete();
-    })
-    return res.sendStatus(403);
-  }
+      if (!foundUser) return res.status(401).json({ message: 'Unauthorized' })
 
-  jwt.verify(refreshToken, process.env.REFRESH_TOKEN, async (err, decoded) => {
-    if (err) {
-      userToken.token = "";
-      await userToken.save();
+      const { accessToken } = await generateTokens(foundUser);
+
+      res.status(201).json({ accessToken });
     }
-    if (err || !foundUser._id.equals(decoded._id)) return res.sendStatus(403);
-
-    try {
-      const { accessToken, refreshToken } = await generateTokens(foundUser);
-      if (cookies?.jwt) {
-        res.clearCookie('jwt', { httpOnly: true, sameSite: 'None' });
-      }
-      res.cookie('jwt', refreshToken, { httpOnly: true, sameSite: 'None', maxAge: 24 * 60 * 60 * 1000 });
-      res.status(201).json({ accessToken })
-    } catch (error) {
-      res.sendStatus(401);
-    }
-  })
+  )
 }
 
 

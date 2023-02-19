@@ -4,7 +4,7 @@ import UserModel from "../model/userModel.js";
 
 const getUserInviteList = async (req, res) => {
   const { userID } = req;
-  const invitedRooms = await RoomModel.find({ "inviteList": { "$in": [mongoose.Types.ObjectId(userID)] } }).select("name _id")
+  const invitedRooms = await RoomModel.find({ "inviteList.id": mongoose.Types.ObjectId(userID) }).select("name _id")
   if (invitedRooms.length === 0) return res.sendStatus(404);
   return res.status(200).json(invitedRooms);
 }

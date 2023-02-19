@@ -35,21 +35,22 @@ const getMessage = async (req, res) => {
 }
 
 const addMessage = async (req, res) => {
-  const { body, userID } = req;
+  const { body, userID: senderID, userName } = req;
   const { roomID } = req.params;
-  if (!roomID || !userID || !body.message || !body.senderID) return res.status(406).json({ status: "error", message: "something missed!" });
+  if (!roomID || !userName || !body.message || !senderID) return res.status(406).json({ status: "error", message: "something missed!" });
 
-  const isUserInRoom = await RoomModel.find({ "users.userId": body.senderID, "_id": roomID });
-  if (!isUserInRoom) return res.status(403).json({ status: "error", message: "you aren't on this room!" });
+  const isUserInRoom = await RoomModel.find({ "users.userId": senderID, "_id": roomID });
 
+  if (isUserInRoom.length === 0) return res.status(403).json({ status: "error", message: "you aren't on this room!" });
   const saveMessage = await MessageModel.create({
     message: body.message,
-    sender: body.senderID,
+    senderID,
+    senderName: userName,
     roomID,
   })
 
   if (!saveMessage) return res.status(500).json({ status: "error", message: "cant send the message" });
-  return res.sendStatus(201);
+  return res.status(201).json({ status: "success", message: saveMessage });
 
 }
 

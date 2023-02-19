@@ -6,7 +6,7 @@ const handleRegister = async (req, res) => {
 
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
-    const createUser = await UserModel.create({
+    await UserModel.create({
       userName,
       email,
       password: hashedPassword,

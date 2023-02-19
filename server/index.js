@@ -10,10 +10,17 @@ import userRoutes from "./routes/userRoutes.js";
 import cookieParser from "cookie-parser";
 import roomRoutes from "./routes/roomRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
-
+import { Server } from "socket.io";
 dotenv.config();
 const app = express();
-
+const PORT = process.env.PORT || 9000;
+const server = app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const io = new Server(server, {
+  pingTimeout: 6000,
+  cors: {
+    origin: process.env.FRONT_END_URL
+  }
+})
 app.use(logger)
 app.use(credentials);
 app.use(cors(corsOptions));
@@ -24,15 +31,20 @@ app.use(express.json({ limit: '50mb' }));
 app.use(express.json());
 app.use(cookieParser());
 
+
 //routes
 app.use("/api", userRoutes)
 
 // routes need to jwt verify
-
 app.use("/api", roomRoutes);
+
+app.use((req, res, next) => {
+  req.io = io;
+  next();
+})
 app.use("/api", messageRoutes)
 
-const PORT = process.env.PORT || 9000;
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -41,14 +53,32 @@ mongoose
   })
   .then(() => {
     console.log('Connected to MongoDB');
-    app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
-
-    /* ONLY ADD DATA ONE TIME */
-    // AffiliateStat.insertMany(dataAffiliateStat);
-    // OverallStat.insertMany(dataOverallStat);
-    // Product.insertMany(dataProduct);
-    // ProductStat.insertMany(dataProductStat);
-    // Transaction.insertMany(dataTransaction);
-    // User.insertMany(dataUser);
   })
   .catch((error) => console.log(`${error} did not connect`));
+
+io.on("connection", (socket) => {
+  console.log("Connected to socket.io");
+  socket.on("setup", (userID) => {
+    socket.join(userID);
+    console.log(userID)
+    socket.emit("connected");
+  });
+
+  socket.on("join chat", (room) => {
+    socket.join(room);
+    console.log(`user joined new room with id ${room}`)
+  })
+
+  socket.on("new message", (newMessageReceived) => {
+    const chat = newMessageReceived.chat;
+
+    if (!chat.users) return console.log("chat.users not defined");
+
+    chat.users.forEach(user => {
+      if (user.userId === newMessageReceived._id) return;
+
+      socket.in(user.userId).emit("received")
+    })
+  })
+
+})

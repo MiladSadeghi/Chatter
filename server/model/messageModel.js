@@ -5,7 +5,7 @@ const messageSchema = new mongoose.Schema({
     type: String,
     required: true
   },
-  sender: {
+  senderID: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
     required: true
@@ -14,7 +14,12 @@ const messageSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: "Room",
     required: true
-  }
+  },
+  senderName: {
+    type: String,
+    ref: "User",
+    required: true
+  },
 }, {
   timestamps: true
 })

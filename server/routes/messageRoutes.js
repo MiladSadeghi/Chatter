@@ -8,7 +8,6 @@ messageRoutes.use(verifyJWT);
 messageRoutes.get("/msg/", getAllRoomMessages);
 messageRoutes.get("/msg/:roomID", getRoomMessages);
 messageRoutes.get("/msg-update/:roomID", getMessage);
-
-messageRoutes.post("/msg/:roomID", addMessage)
+messageRoutes.post("/msg/:roomID", addMessage);
 
 export default messageRoutes
