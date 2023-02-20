@@ -1,9 +1,9 @@
-import { TRoomUser } from "../types/room.types";
+import { TRoomBlackList, TRoomInviteList, TRoomUser } from "../types/room.types";
 import { IMessage } from "./message.interfaces";
 
 export interface IRoom {
-  blackList: Array<string>,
-  inviteList: Array<string>,
+  blackList: TRoomBlackList[],
+  inviteList: TRoomInviteList[],
   name: string,
   _id: string,
   users: TRoomUser[],

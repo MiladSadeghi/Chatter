@@ -1,6 +1,7 @@
+import { toast } from "react-toastify";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import apiSlice from "../api/apiSlice";
-import { setInviteList, setRooms } from "./userSlice";
+import { acceptInvite, setInviteList, setRooms } from "./userSlice";
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -35,9 +36,32 @@ const userApiSlice = apiSlice.injectEndpoints({
         url: "api/user/accept-invite",
         method: "POST",
         body: { roomID }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(acceptInvite({ room: data.room, roomID: data.room._id }))
+        } catch (error) {
+          toast.error("cant accept the invite")
+        }
+      }
+    }),
+    ignoreRoomInvite: builder.mutation({
+      query: (roomID: string) => ({
+        url: "/user/ignore-invite",
+        method: "POST",
+        body: { roomID }
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(acceptInvite({ room: data.room, roomID: data.room._id }))
+        } catch (error) {
+          toast.error("cant accept the invite")
+        }
+      }
     })
   })
 })
 
-export const { useGetInviteListMutation, useGetUserRoomsMutation, useAcceptRoomInviteMutation } = userApiSlice;
+export const { useGetInviteListMutation, useGetUserRoomsMutation, useAcceptRoomInviteMutation, useIgnoreRoomInviteMutation } = userApiSlice;

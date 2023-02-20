@@ -3,7 +3,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector } from "react-redux";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import tw from "twin.macro";
-import Directory from "./Directory";
+import RoomBar from "./RoomBar";
 
 import {
   useGetRoomMessageMutation,
@@ -81,39 +81,37 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                 <ChatHeaderName>{Room.name}</ChatHeaderName>
               </ChatHeader>
               <ChatBody>
-                <div>
-                  <Messages>
-                    {messages.map((message: IMessage) => {
-                      if (message.senderID === userID) {
-                        return (
-                          <MyMessage key={message._id}>
-                            <MessageBody>{message.message}</MessageBody>
-                          </MyMessage>
-                        );
-                      } else {
-                        return (
-                          <MemberMessage key={message._id}>
-                            <SenderMessage>{message.senderName}</SenderMessage>
-                            <MessageBody>{message.message}</MessageBody>
-                          </MemberMessage>
-                        );
-                      }
-                    })}
-                  </Messages>
-                </div>
-                <MessageInputWrapper>
-                  <MessageInput
-                    placeholder="Type a message"
-                    value={inputValue}
-                    onChange={handleChange}
-                    onKeyDown={enterPressed}
-                  />
-                  <MessageSendIcon onClick={submit} />
-                </MessageInputWrapper>
+                <Messages>
+                  {messages.map((message: IMessage) => {
+                    if (message.senderID === userID) {
+                      return (
+                        <MyMessage key={message._id}>
+                          <MessageBody>{message.message}</MessageBody>
+                        </MyMessage>
+                      );
+                    } else {
+                      return (
+                        <MemberMessage key={message._id}>
+                          <SenderMessage>{message.senderName}</SenderMessage>
+                          <MessageBody>{message.message}</MessageBody>
+                        </MemberMessage>
+                      );
+                    }
+                  })}
+                </Messages>
               </ChatBody>
+              <ChatInputWrapper>
+                <ChatInput
+                  placeholder="Type a message"
+                  value={inputValue}
+                  onChange={handleChange}
+                  onKeyDown={enterPressed}
+                />
+                <MessageSendIcon onClick={submit} />
+              </ChatInputWrapper>
             </Chat>
           </Wrapper>
-          <Directory Room={Room} />
+          <RoomBar Room={Room} />
         </>
       )}
     </>
@@ -127,16 +125,16 @@ const ChatHeaderImg = tw(
   UserGroupIcon
 )`w-10 h-10 p-2 bg-slate-400 rounded-full mr-3 text-white`;
 const ChatHeaderName = tw.h3`font-Inter font-bold text-xl`;
-const ChatBody = tw.div`p-7 flex flex-col h-full`;
-const Messages = tw.div`h-full overflow-y-auto flex flex-col`;
-const MyMessage = tw.div` py-3 px-5 text-white  bg-my-light-purple text-sm self-end rounded-2xl max-w-[50%] mb-4`;
-const MemberMessage = tw.div`max-w-[50%] py-3 px-5 text-black bg-gray-300 rounded-2xl self-start mb-4`;
+const ChatBody = tw.div` flex flex-col h-full`;
+const Messages = tw.div`h-full flex flex-col scrollbar-thumb-my-light-purple/[.40] scrollbar-track-transparent scrollbar-thin scrollbar-thumb-rounded-md flex-[1_1_0] px-6 pb-0 pt-3`;
+const MyMessage = tw.div` py-3 px-5 text-white  bg-my-light-purple text-sm self-end rounded-2xl max-w-[50%] mb-4 last:mb-0`;
+const MemberMessage = tw.div`max-w-[50%] py-3 px-5 text-black bg-gray-300 rounded-2xl self-start mb-4 last:mb-0`;
 const SenderMessage = tw.h5`text-xs font-bold mb-2`;
 const MessageBody = tw.p`font-Inter`;
-const MessageInputWrapper = tw.div`w-full relative`;
-const MessageInput = tw.input`w-full border-solid border-2 rounded-xl border-gray-200 px-5 h-12 pr-14 font-Inter text-sm`;
+const ChatInputWrapper = tw.div`w-full relative px-6 py-4`;
+const ChatInput = tw.input`w-full border-solid border-2 rounded-xl border-gray-200 px-5 h-12 pr-14 font-Inter text-sm cursor-text`;
 const MessageSendIcon = tw(
   PaperAirplaneIcon
-)`absolute right-5 top-1/2 -translate-y-1/2 w-6 h-6 text-my-light-purple -rotate-45`;
+)`absolute right-[2.6rem] top-1/2 -translate-y-1/2 w-6 h-6 text-my-light-purple -rotate-45 cursor-pointer`;
 
 export default ChatContainer;

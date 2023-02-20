@@ -4,3 +4,9 @@ export type TRoomUser = {
   userName: string
 }
 
+export type TRoomInviteList = {
+  _id: string,
+  name: string
+}
+
+export type TRoomBlackList = TRoomInviteList;
