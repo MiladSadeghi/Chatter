@@ -3,7 +3,7 @@ import handleLogin from "../controller/loginController.js";
 import handleLogout from "../controller/logoutController.js";
 import handleRefreshToken from "../controller/refreshTokenController.js";
 import handleRegister from "../controller/registerController.js";
-import { getUserInviteList, getUserRooms, userAcceptInvite, userIgnoreInvite } from "../controller/userController.js";
+import { getUserInviteList, getUserRooms, userAcceptInvite, userIgnoreInvite, userSearch } from "../controller/userController.js";
 import { checkAvailableUser, checkDuplicateUsernameOrEmail } from "../middleware/auth.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 
@@ -20,5 +20,6 @@ userRoutes.get("/user/invited-list", getUserInviteList);
 userRoutes.get("/user/rooms", getUserRooms);
 userRoutes.post("/user/accept-invite", userAcceptInvite);
 userRoutes.post("/user/ignore-invite", userIgnoreInvite);
+userRoutes.post("/user/search", userSearch)
 
 export default userRoutes;
