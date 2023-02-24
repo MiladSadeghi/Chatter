@@ -11,20 +11,17 @@ import {
 } from "src/core/features/message/messageApiSlice";
 import { IMessage } from "src/ts/interfaces/message.interfaces";
 import { toast } from "react-toastify";
-
+import ChatLoader from "src/common/ChatLoader";
 const ChatContainer = ({ selectedRoom, socket }: any) => {
   const userID = useSelector((state: any) => state.user.userID);
-  const rooms = useSelector((state: any) => state.user.rooms);
-  const [Room, setRoom] = useState<IRoom | null>(null);
+  const Room = useSelector((state: any) => state.user.rooms).find(
+    (room: IRoom) => room._id === selectedRoom
+  );
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [getRoomMessage, { isLoading, isSuccess }] =
     useGetRoomMessageMutation();
   const [sendMessage] = useSendMessageMutation();
-
-  useEffect((): any => {
-    setRoom(() => rooms.find((room: IRoom) => room._id === selectedRoom));
-  }, [selectedRoom]);
 
   const getMessages = async () => {
     try {
@@ -38,7 +35,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   useEffect(() => {
     getMessages();
     socket.emit("join chat", selectedRoom);
-  }, [Room]);
+  }, []);
 
   useEffect(() => {
     socket.on("message received", (newMessageReceived: IMessage[]) => {
@@ -72,6 +69,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
 
   return (
     <>
+      {Room && isLoading && <ChatLoader />}
       {Room && isSuccess && (
         <>
           <Wrapper>
@@ -111,7 +109,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
               </ChatInputWrapper>
             </Chat>
           </Wrapper>
-          <RoomBar Room={Room} />
+          <RoomBar RoomID={Room._id} />
         </>
       )}
     </>

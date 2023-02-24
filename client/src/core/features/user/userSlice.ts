@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { IUser } from "src/ts/interfaces/user.interfaces";
 import { TRoomInviteList } from "src/ts/types/room.types";
-
+import { IRoom } from "src/ts/interfaces/room.interfaces";
 
 const initialState: IUser = {
   rooms: [],
@@ -35,17 +35,23 @@ const userSlice = createSlice({
     },
     acceptInvite: (state, action) => {
       const { payload } = action;
-      const inviteList = state.inviteList.filter((invite: TRoomInviteList) => invite._id !== payload.roomID);
+      const inviteList = state.inviteList.filter((invite: TRoomInviteList) => invite.id !== payload.roomID);
       state.rooms.push(payload.room);
       state.inviteList = inviteList;
     },
     ignoreInvite: (state: IUser, action) => {
       const { payload } = action;
-      const inviteList = state.inviteList.filter((invite: TRoomInviteList) => invite._id !== payload.roomID);
+      const inviteList = state.inviteList.filter((invite: TRoomInviteList) => invite.id !== payload.roomID);
       state.inviteList = inviteList;
+    },
+    addUserToRoomInviteList: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      console.log(roomIndex);
+      state.rooms[roomIndex].inviteList = [...state.rooms[roomIndex].inviteList, { id: payload.id, name: payload.name }]
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, addUserToRoomInviteList } = userSlice.actions;
 export default userSlice.reducer;

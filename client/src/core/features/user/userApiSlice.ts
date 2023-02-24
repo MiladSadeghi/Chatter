@@ -25,7 +25,7 @@ const userApiSlice = apiSlice.injectEndpoints({
       }),
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
-          const { data: rooms }: { data: IRoom } = await queryFulfilled;
+          const { data: rooms }: { data: IRoom[] } = await queryFulfilled;
           dispatch(setRooms(rooms))
         } catch (error) {
         }
@@ -48,7 +48,7 @@ const userApiSlice = apiSlice.injectEndpoints({
     }),
     ignoreRoomInvite: builder.mutation({
       query: (roomID: string) => ({
-        url: "/user/ignore-invite",
+        url: "api/user/ignore-invite",
         method: "POST",
         body: { roomID }
       }),
@@ -60,8 +60,15 @@ const userApiSlice = apiSlice.injectEndpoints({
           toast.error("cant accept the invite")
         }
       }
+    }),
+    userSearch: builder.mutation<void, { query: string, roomID: string }>({
+      query: ({ query, roomID }) => ({
+        url: "api/user/search",
+        method: "POST",
+        body: { query, roomID }
+      })
     })
   })
 })
 
-export const { useGetInviteListMutation, useGetUserRoomsMutation, useAcceptRoomInviteMutation, useIgnoreRoomInviteMutation } = userApiSlice;
+export const { useGetInviteListMutation, useGetUserRoomsMutation, useAcceptRoomInviteMutation, useIgnoreRoomInviteMutation, useUserSearchMutation } = userApiSlice;

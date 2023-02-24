@@ -22,7 +22,7 @@ const RoomList = () => {
   const user: IUser = useSelector((state: any) => state.user);
   const dispatch: AppDispatch = useDispatch();
   const [acceptRoomInvite] = useAcceptRoomInviteMutation();
-  const [ignoreRoomInvite] = useAcceptRoomInviteMutation();
+  const [ignoreRoomInvite] = useIgnoreRoomInviteMutation();
 
   const roomHandler = (roomID: string) => {
     dispatch(selectRoom(roomID));
@@ -49,7 +49,7 @@ const RoomList = () => {
               You Are Invited To:
             </p>
             {user.inviteList.map((invitedRoom: TRoomInviteList) => (
-              <InviteListRoom key={invitedRoom._id}>
+              <InviteListRoom key={invitedRoom.id}>
                 <Room className="w-full rounded-lg bg-white px-2 py-3">
                   <RoomImage />
                   <div className="flex w-full items-center justify-between">
@@ -58,12 +58,12 @@ const RoomList = () => {
                       <CheckCircleIcon
                         width={24}
                         className="mr-1 rounded-full bg-green-600 text-white"
-                        onClick={() => acceptInvite(invitedRoom._id)}
+                        onClick={() => acceptInvite(invitedRoom.id)}
                       />
                       <XCircleIcon
                         width={24}
                         className="rounded-full bg-red-600 text-white"
-                        onClick={() => ignoreInvite(invitedRoom._id)}
+                        onClick={() => ignoreInvite(invitedRoom.id)}
                       />
                     </div>
                   </div>

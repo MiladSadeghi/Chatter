@@ -17,6 +17,8 @@ const Chat = () => {
   useEffect(() => {
     socket = socketIOClient("http://localhost:3001");
     socket.emit("setup", currentUserID);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
