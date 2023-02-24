@@ -37,6 +37,9 @@ const isModerator = (params) => {
       case "black-list":
         if (!body.bannedUserId || !userID || !body.roomID) return res.status(406).json({ status: "error", message: "something missed!" })
         break;
+      case "cancel-invite-list":
+        if (!body.canceledUserId || !userID || !body.roomID) return res.status(406).json({ status: "error", message: "something missed!" })
+        break;
     }
 
     const room = await RoomModel.findById({ _id: body.roomID });
@@ -48,7 +51,7 @@ const isModerator = (params) => {
         isUserModerator = true;
       }
     })
-    if (!isUserModerator) return res.status(403).json({ status: "error", message: "you are not the owner." });
+    if (!isUserModerator) return res.status(403).json({ status: "error", message: "you are not the admin." });
     req.room = room;
     next();
   }

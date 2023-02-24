@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import RoomModel from "../model/roomModel.js";
 import UserModel from "../model/userModel.js";
 import kickUser from "../utils/kickUser.js";
@@ -91,6 +92,22 @@ const inviteUserToRoom = async (req, res) => {
   }
 }
 
+const cancelUserInvite = (req, res) => {
+  const { room, body } = req;
+  const { canceledUserId } = body;
+
+  if (room.inviteList.includes(mongoose.Types.ObjectId(canceledUserId))) {
+    room.inviteList = room.inviteList.filter((invitedUser) => !invitedUser.equals(mongoose.Types.ObjectId(canceledUserId)))
+    room.save();
+    console.log(room)
+    res.sendStatus(200);
+  } else {
+    res.sendStatus(404)
+  }
+
+
+}
+
 const addUserToRoomBlacklist = async (req, res) => {
   const { room, body } = req;
   const { bannedUserId } = body;
@@ -105,4 +122,4 @@ const addUserToRoomBlacklist = async (req, res) => {
   });
 }
 
-export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist };
+export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist, cancelUserInvite };
