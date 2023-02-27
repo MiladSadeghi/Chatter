@@ -68,16 +68,18 @@ io.on("connection", (socket) => {
     console.log(`user joined new room with id ${room}`)
   })
 
-  socket.on("new message", (newMessageReceived) => {
-    const chat = newMessageReceived.chat;
+  socket.on("new message", (receiveData) => {
+    const users = receiveData.users;
+    const message = receiveData.response;
 
-    if (!chat.users) return console.log("chat.users not defined");
+    console.log(users, message)
 
-    chat.users.forEach(user => {
-      if (user.userId === newMessageReceived._id) return;
+    if (!users) return console.log("chat.users not defined");
 
-      socket.in(user.userId).emit("received")
+    users.forEach(user => {
+      if (user.userId === message.senderID) return;
+      socket.in(user.userId).emit("message received", { ...message })
     })
   })
-
 })
+

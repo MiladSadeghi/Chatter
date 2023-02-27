@@ -4,7 +4,7 @@ import tw from "twin.macro";
 import ChatContainer from "./components/ChatContainer";
 import ProfileBar from "./components/ProfileBar";
 import RoomList from "./components/RoomList";
-import socketIOClient from "socket.io-client";
+import { io } from "socket.io-client";
 
 let socket: any;
 
@@ -14,11 +14,14 @@ const Chat = () => {
   );
   const currentUserID = useSelector((state: any) => state.user.userID);
 
-  useEffect(() => {
-    socket = socketIOClient("http://localhost:3001");
-    socket.emit("setup", currentUserID);
+  socket = io("http://localhost:3001");
+  socket.onAny((eventName: any, ...args: any) => {
+    console.log(eventName, args);
+  });
+  socket.emit("setup", currentUserID);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    // document.title = "Chatter";
   }, []);
 
   return (

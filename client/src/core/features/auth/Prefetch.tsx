@@ -28,7 +28,6 @@ const Prefetch = () => {
     getUserRooms();
     getInviteList();
     getRoomsMessage();
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

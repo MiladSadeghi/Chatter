@@ -36,6 +36,13 @@ const roomApiSlice = apiSlice.injectEndpoints({
         method: "PUT",
         body: { roomID, bannedUserId }
       })
+    }),
+    cancelInvite: builder.mutation<any, any>({
+      query: ({ roomID, canceledUserId }: { roomID: string, canceledUserId: string }) => ({
+        url: "api/room/cancel-invite",
+        method: "POST",
+        body: { roomID, canceledUserId }
+      }),
     })
   })
 })
@@ -45,5 +52,6 @@ export const {
   useDeleteRoomMutation,
   useEditRoomNameMutation,
   useInviteUserMutation,
-  useBannedUserMutation
+  useBannedUserMutation,
+  useCancelInviteMutation
 } = roomApiSlice;

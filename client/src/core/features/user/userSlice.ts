@@ -47,11 +47,15 @@ const userSlice = createSlice({
     addUserToRoomInviteList: (state, action) => {
       const { payload } = action;
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
-      console.log(roomIndex);
       state.rooms[roomIndex].inviteList = [...state.rooms[roomIndex].inviteList, { id: payload.id, name: payload.name }]
+    },
+    deleteFromRoomInviteList: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].inviteList = state.rooms[roomIndex].inviteList.filter((invitedUser: TRoomInviteList) => invitedUser.id !== payload.userID);
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, addUserToRoomInviteList } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, addUserToRoomInviteList, deleteFromRoomInviteList } = userSlice.actions;
 export default userSlice.reducer;

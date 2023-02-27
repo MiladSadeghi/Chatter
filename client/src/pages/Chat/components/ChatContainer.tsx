@@ -14,9 +14,10 @@ import { toast } from "react-toastify";
 import ChatLoader from "src/common/ChatLoader";
 const ChatContainer = ({ selectedRoom, socket }: any) => {
   const userID = useSelector((state: any) => state.user.userID);
-  const Room = useSelector((state: any) => state.user.rooms).find(
+  const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === selectedRoom
   );
+
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
   const [getRoomMessage, { isLoading, isSuccess }] =
@@ -33,13 +34,17 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   };
 
   useEffect(() => {
+    // document.title = `Chatter - ${Room.name}`;
     getMessages();
     socket.emit("join chat", selectedRoom);
   }, []);
 
   useEffect(() => {
-    socket.on("message received", (newMessageReceived: IMessage[]) => {
-      setMessages(newMessageReceived);
+    socket.on("message received", (newMessageReceived: IMessage) => {
+      console.log(newMessageReceived);
+      setMessages((prev: IMessage[]) => {
+        return [...prev, newMessageReceived];
+      });
     });
   }, []);
 
@@ -61,6 +66,11 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
           roomID: selectedRoom,
         }).unwrap();
         setMessages([...messages, response.message]);
+        socket.emit("new message", {
+          users: Room.users,
+          response: response.message,
+        });
+        setInputValue("");
       } catch (error) {
         toast.error("cant send message");
       }

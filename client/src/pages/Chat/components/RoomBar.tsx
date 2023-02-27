@@ -14,9 +14,15 @@ import { useSelector } from "react-redux";
 import { useUserSearchMutation } from "src/core/features/user/userApiSlice";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlass, Oval } from "react-loader-spinner";
-import { UserPlusIcon } from "@heroicons/react/24/outline";
-import { useInviteUserMutation } from "src/core/features/room/roomApiSlice";
-import { addUserToRoomInviteList } from "src/core/features/user/userSlice";
+import { UserPlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import {
+  useCancelInviteMutation,
+  useInviteUserMutation,
+} from "src/core/features/room/roomApiSlice";
+import {
+  addUserToRoomInviteList,
+  deleteFromRoomInviteList,
+} from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 
@@ -38,6 +44,7 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
   const [userSearchData, setUserSearchData] = useState<
     unknown | TRoomInviteList[]
   >();
+  const [cancelInvite] = useCancelInviteMutation();
 
   useEffect(() => {
     const userRole = Room.users.find(
@@ -86,6 +93,15 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
       toast.success("User invited successfully");
     } catch (error: any) {
       toast.error(error.message);
+    }
+  };
+
+  const cancelInviteHandler = async (userID: string) => {
+    try {
+      await cancelInvite({ roomID: RoomID, canceledUserId: userID });
+      dispatch(deleteFromRoomInviteList({ roomID: RoomID, userID }));
+    } catch (error) {
+      toast.error("Sorry! try again later.");
     }
   };
 
@@ -200,6 +216,10 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
                     <RoomMember key={user.id}>
                       <MemberAvatar />
                       <MemberName>{user.name}</MemberName>
+                      <XCircleIcon
+                        className="ml-auto w-6 cursor-pointer rounded-full bg-red-500 text-white"
+                        onClick={() => cancelInviteHandler(user.id)}
+                      />
                     </RoomMember>
                   ))}
                 </RoomMembers>

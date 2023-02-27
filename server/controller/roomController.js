@@ -99,7 +99,6 @@ const cancelUserInvite = (req, res) => {
   if (room.inviteList.includes(mongoose.Types.ObjectId(canceledUserId))) {
     room.inviteList = room.inviteList.filter((invitedUser) => !invitedUser.equals(mongoose.Types.ObjectId(canceledUserId)))
     room.save();
-    console.log(room)
     res.sendStatus(200);
   } else {
     res.sendStatus(404)

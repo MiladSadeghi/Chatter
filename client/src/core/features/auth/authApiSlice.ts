@@ -23,9 +23,9 @@ const authApiSlice = apiSlice.injectEndpoints({
         try {
           const { data } = await queryFulfilled;
           const { accessToken } = data
+          dispatch(setToken({ accessToken }))
           const decodedAccessToken: any = jwt_decode(accessToken);
           dispatch(setCredentials({ userID: decodedAccessToken._id, userName: decodedAccessToken.userName }))
-          dispatch(setToken({ accessToken }))
         } catch (err) {
           toast.error("Sorry! something bad happened! try again later.")
         }
