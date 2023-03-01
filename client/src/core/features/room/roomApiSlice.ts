@@ -1,4 +1,5 @@
 import apiSlice from "../api/apiSlice";
+import { addRoom } from "../user/userSlice";
 
 const roomApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -7,7 +8,15 @@ const roomApiSlice = apiSlice.injectEndpoints({
         url: "api/room",
         method: "POST",
         body: { name }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          const { data } = await queryFulfilled;
+          dispatch(addRoom(data.room))
+        } catch (error) {
+
+        }
+      },
     }),
     deleteRoom: builder.mutation({
       query: (roomID: string) => ({

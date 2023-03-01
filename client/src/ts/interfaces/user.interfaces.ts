@@ -7,5 +7,6 @@ export interface IUser {
   selectedRoomID: null | string,
   directoryIsOpen: Boolean,
   userName: string | null,
-  userID: string | null
+  userID: string | null,
+  isCreateRoomModalShow: Boolean
 }

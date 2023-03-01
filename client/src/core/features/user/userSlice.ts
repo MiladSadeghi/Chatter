@@ -9,7 +9,8 @@ const initialState: IUser = {
   selectedRoomID: null,
   directoryIsOpen: false,
   userName: null,
-  userID: null
+  userID: null,
+  isCreateRoomModalShow: false
 }
 
 const userSlice = createSlice({
@@ -53,9 +54,15 @@ const userSlice = createSlice({
       const { payload } = action;
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
       state.rooms[roomIndex].inviteList = state.rooms[roomIndex].inviteList.filter((invitedUser: TRoomInviteList) => invitedUser.id !== payload.userID);
+    },
+    toggleCreateRoomModal: (state) => {
+      state.isCreateRoomModalShow = !state.isCreateRoomModalShow;
+    },
+    addRoom: (state, action) => {
+      state.rooms.push(action.payload)
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, addUserToRoomInviteList, deleteFromRoomInviteList } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom } = userSlice.actions;
 export default userSlice.reducer;

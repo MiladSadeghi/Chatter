@@ -1,5 +1,5 @@
 import { PaperAirplaneIcon, UserGroupIcon } from "@heroicons/react/24/solid";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useSelector } from "react-redux";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import tw from "twin.macro";
@@ -23,6 +23,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   const [getRoomMessage, { isLoading, isSuccess }] =
     useGetRoomMessageMutation();
   const [sendMessage] = useSendMessageMutation();
+  const chatScroll: any = useRef();
 
   const getMessages = async () => {
     try {
@@ -37,16 +38,27 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
     // document.title = `Chatter - ${Room.name}`;
     getMessages();
     socket.emit("join chat", selectedRoom);
-  }, []);
+
+    return () => {
+      setMessages([]);
+    };
+  }, [selectedRoom]);
 
   useEffect(() => {
     socket.on("message received", (newMessageReceived: IMessage) => {
-      console.log(newMessageReceived);
       setMessages((prev: IMessage[]) => {
         return [...prev, newMessageReceived];
       });
     });
   }, []);
+
+  useEffect(() => {
+    if (isSuccess) {
+      setTimeout(() => {
+        chatScroll.current.scrollTop = chatScroll.current.scrollHeight;
+      }, 200);
+    }
+  }, [messages, isSuccess]);
 
   const enterPressed = (e: any) => {
     if (e.keyCode === 13) {
@@ -89,7 +101,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                 <ChatHeaderName>{Room.name}</ChatHeaderName>
               </ChatHeader>
               <ChatBody>
-                <Messages>
+                <Messages ref={chatScroll}>
                   {messages.map((message: IMessage) => {
                     if (message.senderID === userID) {
                       return (
