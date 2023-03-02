@@ -126,7 +126,6 @@ const kickUserFromRoom = async (req, res) => {
   const { kickedUserID } = body;
   room.users = room.users.filter(user => user.userId !== kickedUserID);
   room.save((err) => {
-    console.log(err)
     if (err) return res.status(404).json({ status: "error", message: "cant kick this user from the room" });
     return res.status(200).json({ status: "success", message: "user kicked successfully" })
   });

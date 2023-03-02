@@ -23,6 +23,8 @@ import {
 import {
   addUserToRoomInviteList,
   deleteFromRoomInviteList,
+  ignoreInvite,
+  userJoinedRoom,
 } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -56,6 +58,10 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
     if (userRole?.role !== "7610") {
       setIsModerator(true);
     }
+
+    socket.on("invite canceled by admin", (roomID: string) => {
+      dispatch(ignoreInvite(roomID));
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -103,6 +109,7 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
     try {
       await cancelInvite({ roomID: RoomID, canceledUserId: userID });
       dispatch(deleteFromRoomInviteList({ roomID: RoomID, userID }));
+      socket.emit("admin cancel invite", { roomID: RoomID, userID });
     } catch (error) {
       toast.error("Sorry! try again later.");
     }

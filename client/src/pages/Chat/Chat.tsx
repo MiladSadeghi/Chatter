@@ -8,7 +8,10 @@ import { io } from "socket.io-client";
 import CreateRoomModal from "./components/CreateRoomModal";
 import { AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
-import { removeRoom } from "src/core/features/user/userSlice";
+import {
+  deleteFromRoomInviteList,
+  removeRoom,
+} from "src/core/features/user/userSlice";
 import { toast } from "react-toastify";
 
 let socket: any;
@@ -33,9 +36,17 @@ const Chat = () => {
     socket.emit("setup", currentUserID);
 
     socket.on("user kicked", (receiveData: any) => {
-      console.log(receiveData);
       dispatch(removeRoom(receiveData));
       toast.info("you are kicked from a room");
+    });
+
+    socket.on("user removed from room invite list", (receiveData: any) => {
+      dispatch(
+        deleteFromRoomInviteList({
+          roomID: receiveData.roomID,
+          userID: receiveData.userID,
+        })
+      );
     });
   }, []);
 

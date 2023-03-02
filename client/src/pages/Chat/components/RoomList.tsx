@@ -7,7 +7,11 @@ import { PlusCircleIcon } from "@heroicons/react/24/solid";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { addToInviteList, selectRoom } from "src/core/features/user/userSlice";
+import {
+  addToInviteList,
+  selectRoom,
+  userJoinedRoom,
+} from "src/core/features/user/userSlice";
 import { AppDispatch } from "src/core/store";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import { IUser } from "src/ts/interfaces/user.interfaces";
@@ -30,11 +34,26 @@ const RoomList = ({ socket }: any) => {
   };
 
   const acceptInvite = async (roomID: string) => {
-    await acceptRoomInvite(roomID);
+    try {
+      await acceptRoomInvite(roomID);
+      socket.emit("remove from room invite list", {
+        roomID,
+        userID: user.userID,
+      });
+      socket.emit("user accept invite", {
+        roomID,
+        userID: user.userID,
+        userName: user.userName,
+      });
+    } catch (error) {}
   };
 
   const ignoreInvite = async (roomID: string) => {
     await ignoreRoomInvite(roomID);
+    socket.emit("remove from room invite list", {
+      roomID,
+      userID: user.userID,
+    });
   };
 
   useEffect(() => {
@@ -44,6 +63,16 @@ const RoomList = ({ socket }: any) => {
         name: receivedData.name,
       };
       dispatch(addToInviteList(inviteData));
+    });
+
+    socket.on("user joined room", (receiveData: any) => {
+      dispatch(
+        userJoinedRoom({
+          roomID: receiveData.roomID,
+          userID: receiveData.userID,
+          userName: receiveData.userName,
+        })
+      );
     });
   }, []);
 

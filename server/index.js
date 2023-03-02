@@ -11,6 +11,7 @@ import cookieParser from "cookie-parser";
 import roomRoutes from "./routes/roomRoutes.js";
 import messageRoutes from "./routes/messageRoutes.js";
 import { Server } from "socket.io";
+import RoomModel from "./model/roomModel.js";
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 9000;
@@ -93,8 +94,33 @@ io.on("connection", (socket) => {
 
   socket.on("user kick", (receiveData) => {
     const { RoomID, userID } = receiveData;
-    console.log(receiveData)
     socket.in(userID).emit("user kicked", RoomID)
+  })
+
+  socket.on("remove from room invite list", async (receiveData) => {
+    const { roomID, userID } = receiveData;
+    const foundedRoom = await RoomModel.findOne({ _id: roomID });
+    foundedRoom.users.forEach((user) => {
+      if (user.userId !== userID) {
+        socket.to(user.userId).emit("user removed from room invite list", { roomID, userID })
+      }
+    })
+  })
+
+  socket.on("user accept invite", async (receiveData) => {
+    const { roomID, userID, userName } = receiveData;
+    const foundedRoom = await RoomModel.findOne({ _id: roomID });
+    foundedRoom.users.forEach((user) => {
+      if (user.userId !== userID) {
+        socket.to(user.userId).emit("user joined room", { roomID, userID, userName })
+      }
+    })
+  })
+
+  socket.on("admin cancel invite", (receiveData) => {
+    const { roomID, userID } = receiveData;
+
+    socket.to(userID).emit("invite canceled by admin", roomID)
   })
 })
 

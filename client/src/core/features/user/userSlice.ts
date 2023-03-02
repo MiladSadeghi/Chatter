@@ -72,9 +72,15 @@ const userSlice = createSlice({
     removeRoom: (state, action) => {
       const { payload } = action;
       state.rooms = state.rooms.filter((room: IRoom) => room._id !== payload)
+    },
+    userJoinedRoom: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].inviteList = state.rooms[roomIndex].inviteList.filter((invitedUser: TRoomInviteList) => invitedUser._id !== payload.userID);
+      state.rooms[roomIndex].users.push({ role: "7610", userId: payload.userID, userName: payload.userName })
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom } = userSlice.actions;
 export default userSlice.reducer;
