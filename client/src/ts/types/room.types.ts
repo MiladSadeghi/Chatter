@@ -5,7 +5,7 @@ export type TRoomUser = {
 }
 
 export type TRoomInviteList = {
-  id: string,
+  _id: string,
   name: string
 }
 

@@ -40,6 +40,9 @@ const isModerator = (params) => {
       case "cancel-invite-list":
         if (!body.canceledUserId || !userID || !body.roomID) return res.status(406).json({ status: "error", message: "something missed!" })
         break;
+      case "kick-user":
+        if (!body.kickedUserID || !userID || !body.roomID) return res.status(406).json({ status: "error", message: "something missed!" })
+        break;
     }
 
     const room = await RoomModel.findById({ _id: body.roomID });

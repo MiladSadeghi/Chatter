@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import tw from "twin.macro";
 import {
@@ -7,7 +7,7 @@ import {
   TRoomSearchUser,
   TRoomUser,
 } from "src/ts/types/room.types";
-import { UserIcon } from "@heroicons/react/24/solid";
+import { EllipsisVerticalIcon, UserIcon } from "@heroicons/react/24/solid";
 import styled from "styled-components";
 import { IUser } from "src/ts/interfaces/user.interfaces";
 import { useSelector } from "react-redux";
@@ -16,6 +16,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlass, Oval } from "react-loader-spinner";
 import { UserPlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
 import {
+  useKickUserMutation,
   useCancelInviteMutation,
   useInviteUserMutation,
 } from "src/core/features/room/roomApiSlice";
@@ -25,8 +26,9 @@ import {
 } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
+import { Menu, Transition } from "@headlessui/react";
 
-const RoomBar = ({ RoomID }: { RoomID: string }) => {
+const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
   const dispatch = useDispatch();
   const Room = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === RoomID
@@ -40,6 +42,7 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
     useUserSearchMutation();
   const [inviteUser, { isLoading: inviteUserLoading, originalArgs }] =
     useInviteUserMutation();
+  const [kickUser] = useKickUserMutation();
   const [searchInputValue, setSearchInputValue] = useState<string>("");
   const [userSearchData, setUserSearchData] = useState<
     unknown | TRoomInviteList[]
@@ -80,13 +83,13 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
   const handleInvite = async (userID: string, userName: string) => {
     try {
       await inviteUser({ roomID: Room._id, invitedUserId: userID }).unwrap();
-      dispatch(
-        addUserToRoomInviteList({
-          id: userID,
-          name: userName,
-          roomID: Room._id,
-        })
-      );
+      const inviteData = { id: userID, name: userName, roomID: Room._id };
+      dispatch(addUserToRoomInviteList(inviteData));
+      socket.emit("send invite", {
+        users: Room.users,
+        inviteData,
+        roomName: Room.name,
+      });
       setUserSearchData((userSearch: any) => {
         return userSearch.filter((user: any) => user._id !== userID);
       });
@@ -103,6 +106,13 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
     } catch (error) {
       toast.error("Sorry! try again later.");
     }
+  };
+
+  const kickHandler = async (userID: string) => {
+    try {
+      await kickUser({ roomID: RoomID, kickedUserID: userID });
+      socket.emit("user kick", { RoomID, userID });
+    } catch (error) {}
   };
 
   return (
@@ -137,10 +147,51 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
             <Count>
               Room Member <CountNumber>{Room.users.length}</CountNumber>
             </Count>
-            {Room.users.map((user: TRoomUser) => (
-              <RoomMember key={user.userId}>
+            {Room.users.map((roomUser: TRoomUser) => (
+              <RoomMember key={roomUser.userId}>
                 <MemberAvatar />
-                <MemberName>{user.userName}</MemberName>
+                <MemberName>{roomUser.userName}</MemberName>
+                {isModerator && roomUser.userId !== user.userID && (
+                  <Menu
+                    as="div"
+                    className="relative ml-auto inline-block text-left"
+                  >
+                    <div>
+                      <Menu.Button className="inline-flex w-full justify-center rounded-md border border-gray-500 bg-gray-200 px-2 py-2 text-sm font-medium shadow-sm  hover:bg-gray-300">
+                        <EllipsisVerticalIcon className="h-5 w-5 text-black" />
+                      </Menu.Button>
+                    </div>
+
+                    <Transition
+                      as={Fragment}
+                      enter="transition ease-out duration-100"
+                      enterFrom="transform opacity-0 scale-95"
+                      enterTo="transform opacity-100 scale-100"
+                      leave="transition ease-in duration-75"
+                      leaveFrom="transform opacity-100 scale-100"
+                      leaveTo="transform opacity-0 scale-95"
+                    >
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                        <div className="py-1 px-1">
+                          <Menu.Item>
+                            {({ active }) => (
+                              <h5
+                                className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                  active
+                                    ? "bg-gray-100 text-gray-900"
+                                    : "text-gray-700"
+                                }`}
+                                onClick={() => kickHandler(roomUser.userId)}
+                              >
+                                Kick
+                              </h5>
+                            )}
+                          </Menu.Item>
+                        </div>
+                      </Menu.Items>
+                    </Transition>
+                  </Menu>
+                )}
               </RoomMember>
             ))}
           </RoomMembers>
@@ -213,12 +264,12 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
                     <CountNumber>{Room.inviteList.length}</CountNumber>
                   </Count>
                   {Room.inviteList.map((user: TRoomInviteList) => (
-                    <RoomMember key={user.id}>
+                    <RoomMember key={user._id}>
                       <MemberAvatar />
                       <MemberName>{user.name}</MemberName>
                       <XCircleIcon
                         className="ml-auto w-6 cursor-pointer rounded-full bg-red-500 text-white"
-                        onClick={() => cancelInviteHandler(user.id)}
+                        onClick={() => cancelInviteHandler(user._id)}
                       />
                     </RoomMember>
                   ))}
@@ -235,7 +286,7 @@ const RoomBar = ({ RoomID }: { RoomID: string }) => {
                     <CountNumber>{Room.blackList.length}</CountNumber>
                   </Count>
                   {Room.blackList.map((user: TRoomBlackList) => (
-                    <RoomMember key={user.id}>
+                    <RoomMember key={user._id}>
                       <MemberAvatar />
                       <MemberName>{user.name}</MemberName>
                     </RoomMember>

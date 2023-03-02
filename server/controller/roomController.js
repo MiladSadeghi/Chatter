@@ -21,7 +21,7 @@ const createRoom = async (req, res) => {
       name: roomName,
     }
     const createdRoom = await RoomModel.create(roomData);
-    res.status(201).json({ ...createdRoom._doc, "status": "success", "message": "room created successfully" })
+    res.status(201).json({ room: createdRoom._doc, "status": "success", "message": "room created successfully" })
   } catch (error) {
     res.status(400).json({ status: "error", message: "try again later." })
   }
@@ -111,7 +111,7 @@ const addUserToRoomBlacklist = async (req, res) => {
   const { room, body } = req;
   const { bannedUserId } = body;
 
-  const isKicked = kickUser(room, bannedUserId);
+  const isKicked = await kickUser(room, bannedUserId);
   if (!isKicked) return res.status(408).json({ status: "error", message: "cant kick this user from the room" });
   const foundUser = await UserModel.find({ _id: bannedUserId }).select("_id name")
   room.blackList.push({ id: foundUser._id, name: foundUser.name });
@@ -121,4 +121,15 @@ const addUserToRoomBlacklist = async (req, res) => {
   });
 }
 
-export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist, cancelUserInvite };
+const kickUserFromRoom = async (req, res) => {
+  const { room, body } = req;
+  const { kickedUserID } = body;
+  room.users = room.users.filter(user => user.userId !== kickedUserID);
+  room.save((err) => {
+    console.log(err)
+    if (err) return res.status(404).json({ status: "error", message: "cant kick this user from the room" });
+    return res.status(200).json({ status: "success", message: "user kicked successfully" })
+  });
+}
+
+export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist, cancelUserInvite, kickUserFromRoom };

@@ -35,7 +35,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   };
 
   useEffect(() => {
-    // document.title = `Chatter - ${Room.name}`;
+    document.title = `Chatter - ${Room.name}`;
     getMessages();
     socket.emit("join chat", selectedRoom);
 
@@ -46,9 +46,11 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
 
   useEffect(() => {
     socket.on("message received", (newMessageReceived: IMessage) => {
-      setMessages((prev: IMessage[]) => {
-        return [...prev, newMessageReceived];
-      });
+      if (newMessageReceived.roomID === selectedRoom) {
+        setMessages((prev: IMessage[]) => {
+          return [...prev, newMessageReceived];
+        });
+      }
     });
   }, []);
 
@@ -131,7 +133,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
               </ChatInputWrapper>
             </Chat>
           </Wrapper>
-          <RoomBar RoomID={Room._id} />
+          <RoomBar RoomID={Room._id} socket={socket} />
         </>
       )}
     </>

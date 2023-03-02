@@ -7,6 +7,9 @@ import RoomList from "./components/RoomList";
 import { io } from "socket.io-client";
 import CreateRoomModal from "./components/CreateRoomModal";
 import { AnimatePresence } from "framer-motion";
+import { useDispatch } from "react-redux";
+import { removeRoom } from "src/core/features/user/userSlice";
+import { toast } from "react-toastify";
 
 let socket: any;
 
@@ -18,20 +21,28 @@ const Chat = () => {
   const isCreateRoomModalOpen = useSelector(
     (state: any) => state.user.isCreateRoomModalShow
   );
+  const dispatch = useDispatch();
   socket = io("http://localhost:3001");
-  socket.onAny((eventName: any, ...args: any) => {
-    console.log(eventName, args);
-  });
-  socket.emit("setup", currentUserID);
 
   useEffect(() => {
     document.title = "Chatter";
+
+    socket.onAny((eventName: any, ...args: any) => {
+      console.log(eventName, args);
+    });
+    socket.emit("setup", currentUserID);
+
+    socket.on("user kicked", (receiveData: any) => {
+      console.log(receiveData);
+      dispatch(removeRoom(receiveData));
+      toast.info("you are kicked from a room");
+    });
   }, []);
 
   return (
     <Wrapper>
       <ProfileBar />
-      <RoomList />
+      <RoomList socket={socket} />
       {selectedRoom && (
         <ChatContainer selectedRoom={selectedRoom} socket={socket} />
       )}

@@ -4,22 +4,22 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 import { PlusCircleIcon } from "@heroicons/react/24/solid";
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
-import { selectRoom } from "src/core/features/user/userSlice";
+import { addToInviteList, selectRoom } from "src/core/features/user/userSlice";
 import { AppDispatch } from "src/core/store";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import { IUser } from "src/ts/interfaces/user.interfaces";
-import { TRoomInviteList } from "src/ts/types/room.types";
 import tw from "twin.macro";
 import {
   useAcceptRoomInviteMutation,
   useIgnoreRoomInviteMutation,
 } from "src/core/features/user/userApiSlice";
 import { toggleCreateRoomModal } from "src/core/features/user/userSlice";
+import { TUserInviteList } from "src/ts/types/user.types";
 
-const RoomList = () => {
+const RoomList = ({ socket }: any) => {
   const user: IUser = useSelector((state: any) => state.user);
   const dispatch: AppDispatch = useDispatch();
   const [acceptRoomInvite] = useAcceptRoomInviteMutation();
@@ -37,6 +37,16 @@ const RoomList = () => {
     await ignoreRoomInvite(roomID);
   };
 
+  useEffect(() => {
+    socket.on("get invite for user", (receivedData: any) => {
+      const inviteData = {
+        _id: receivedData._id,
+        name: receivedData.name,
+      };
+      dispatch(addToInviteList(inviteData));
+    });
+  }, []);
+
   return (
     <Wrapper>
       <Header>
@@ -51,8 +61,8 @@ const RoomList = () => {
             <p className="font-Inter text-base font-bold text-white">
               You Are Invited To:
             </p>
-            {user.inviteList.map((invitedRoom: TRoomInviteList) => (
-              <InviteListRoom key={invitedRoom.id}>
+            {user.inviteList.map((invitedRoom: TUserInviteList) => (
+              <InviteListRoom key={invitedRoom._id}>
                 <Room className="w-full rounded-lg bg-white px-2 py-3">
                   <RoomImage />
                   <div className="flex w-full items-center justify-between">
@@ -61,12 +71,12 @@ const RoomList = () => {
                       <CheckCircleIcon
                         width={24}
                         className="mr-1 rounded-full bg-green-600 text-white"
-                        onClick={() => acceptInvite(invitedRoom.id)}
+                        onClick={() => acceptInvite(invitedRoom._id)}
                       />
                       <XCircleIcon
                         width={24}
                         className="rounded-full bg-red-600 text-white"
-                        onClick={() => ignoreInvite(invitedRoom.id)}
+                        onClick={() => ignoreInvite(invitedRoom._id)}
                       />
                     </div>
                   </div>

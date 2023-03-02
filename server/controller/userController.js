@@ -69,7 +69,7 @@ const userIgnoreInvite = async (req, res) => {
   await invitedRoom[0]._doc.inviteList.remove([userID]);
   invitedRoom[0].save((err) => {
     if (err) return res.status(408).json({ status: "error", message: "cant accept invite!" });
-    res.sendStatus(200);
+    res.status(200).json({ "status": "success", "message": "you accept the invite", roomID: body.roomID });
   });
 }
 

@@ -1,9 +1,9 @@
-import { TRoomInviteList } from "../types/room.types";
+import { TUserInviteList } from "../types/user.types";
 import { IRoom } from "./room.interfaces";
 
 export interface IUser {
   rooms: IRoom[],
-  inviteList: TRoomInviteList[],
+  inviteList: TUserInviteList[],
   selectedRoomID: null | string,
   directoryIsOpen: Boolean,
   userName: string | null,

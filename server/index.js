@@ -72,14 +72,29 @@ io.on("connection", (socket) => {
     const users = receiveData.users;
     const message = receiveData.response;
 
-    console.log(users, message)
-
     if (!users) return console.log("chat.users not defined");
 
     users.forEach(user => {
-      if (user.userId === message.senderID) return;
-      socket.in(user.userId).emit("message received", { ...message })
+      if (user.userId !== message.senderID) {
+        console.log(`i send message to ${user.userId}`)
+        socket.in(user.userId).emit("message received", { ...message })
+      }
     })
+  })
+
+  socket.on("send invite", (receiveData) => {
+    const inviteData = receiveData.inviteData;
+    const roomID = receiveData.inviteData.roomID;
+    const roomName = receiveData.roomName;
+    if (inviteData.id) {
+      socket.in(inviteData.id).emit("get invite for user", { _id: roomID, name: roomName })
+    }
+  })
+
+  socket.on("user kick", (receiveData) => {
+    const { RoomID, userID } = receiveData;
+    console.log(receiveData)
+    socket.in(userID).emit("user kicked", RoomID)
   })
 })
 

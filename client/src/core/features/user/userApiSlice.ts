@@ -1,7 +1,7 @@
 import { toast } from "react-toastify";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import apiSlice from "../api/apiSlice";
-import { acceptInvite, setInviteList, setRooms } from "./userSlice";
+import { acceptInvite, ignoreInvite, setInviteList, setRooms } from "./userSlice";
 
 const userApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -52,12 +52,12 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { roomID }
       }),
-      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+      async onQueryStarted(arg: any, { dispatch, queryFulfilled, extra }) {
         try {
           const { data } = await queryFulfilled;
-          dispatch(acceptInvite({ room: data.room, roomID: data.room._id }))
+          dispatch(ignoreInvite(data.roomID))
         } catch (error) {
-          toast.error("cant accept the invite")
+          toast.error("cant ignore the invite")
         }
       }
     }),
