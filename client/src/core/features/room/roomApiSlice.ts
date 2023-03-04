@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import apiSlice from "../api/apiSlice";
-import { addRoom, removeUserFromRoom } from "../user/userSlice";
+import { addRoom, addUserToBlackList, removeUserFromRoom } from "../user/userSlice";
 
 const roomApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -69,6 +69,13 @@ const roomApiSlice = apiSlice.injectEndpoints({
           toast.success("cant kick user! try again later")
         }
       },
+    }),
+    unBannedRoomUser: builder.mutation({
+      query: ({ roomID, userID }: { roomID: string, userID: string }) => ({
+        url: "api/room/unban-user",
+        method: "POST",
+        body: { bannedUserId: userID, roomID }
+      })
     })
   })
 })
@@ -80,5 +87,6 @@ export const {
   useInviteUserMutation,
   useBannedUserMutation,
   useCancelInviteMutation,
-  useKickUserMutation
+  useKickUserMutation,
+  useUnBannedRoomUserMutation
 } = roomApiSlice;

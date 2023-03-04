@@ -19,11 +19,15 @@ import {
   useKickUserMutation,
   useCancelInviteMutation,
   useInviteUserMutation,
+  useBannedUserMutation,
+  useUnBannedRoomUserMutation,
 } from "src/core/features/room/roomApiSlice";
 import {
+  addUserToBlackList,
   addUserToRoomInviteList,
   deleteFromRoomInviteList,
   ignoreInvite,
+  removeUserFromBlacklist,
   userJoinedRoom,
 } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
@@ -32,7 +36,7 @@ import { Menu, Transition } from "@headlessui/react";
 
 const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
   const dispatch = useDispatch();
-  const Room = useSelector((state: any) => state.user.rooms).find(
+  const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === RoomID
   );
   const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(true);
@@ -50,6 +54,8 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
     unknown | TRoomInviteList[]
   >();
   const [cancelInvite] = useCancelInviteMutation();
+  const [bannedUser] = useBannedUserMutation();
+  const [unBannedRoomUser] = useUnBannedRoomUserMutation();
 
   useEffect(() => {
     const userRole = Room.users.find(
@@ -122,6 +128,21 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
     } catch (error) {}
   };
 
+  const banHandler = async ({ userID, userName, roomID }: any) => {
+    try {
+      await bannedUser({ roomID, bannedUserId: userID });
+      dispatch(addUserToBlackList({ userID, userName, roomID }));
+      socket.emit("ban user", { roomID: RoomID, userID, roomName: Room.name });
+    } catch (error) {}
+  };
+
+  const unbanHandler = async (userID: any) => {
+    try {
+      await unBannedRoomUser({ roomID: RoomID, userID });
+      dispatch(removeUserFromBlacklist({ roomID: RoomID, userID }));
+    } catch (error) {}
+  };
+
   return (
     <Wrapper isMenuOpen={isMenuOpen}>
       <Headers>
@@ -191,6 +212,26 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                                 onClick={() => kickHandler(roomUser.userId)}
                               >
                                 Kick
+                              </h5>
+                            )}
+                          </Menu.Item>
+                          <Menu.Item>
+                            {({ active }) => (
+                              <h5
+                                className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                  active
+                                    ? "bg-gray-100 text-gray-900"
+                                    : "text-gray-700"
+                                }`}
+                                onClick={() =>
+                                  banHandler({
+                                    userID: roomUser.userId,
+                                    userName: roomUser.userName,
+                                    roomID: Room._id,
+                                  })
+                                }
+                              >
+                                Ban
                               </h5>
                             )}
                           </Menu.Item>
@@ -296,6 +337,10 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                     <RoomMember key={user._id}>
                       <MemberAvatar />
                       <MemberName>{user.name}</MemberName>
+                      <XCircleIcon
+                        className="ml-auto w-6 cursor-pointer rounded-full bg-red-500 text-white"
+                        onClick={() => unbanHandler(user._id)}
+                      />
                     </RoomMember>
                   ))}
                 </RoomMembers>

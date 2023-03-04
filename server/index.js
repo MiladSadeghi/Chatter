@@ -119,8 +119,12 @@ io.on("connection", (socket) => {
 
   socket.on("admin cancel invite", (receiveData) => {
     const { roomID, userID } = receiveData;
-
     socket.to(userID).emit("invite canceled by admin", roomID)
+  })
+
+  socket.on("ban user", (receiveData) => {
+    const { roomID, userID, roomName } = receiveData;
+    socket.to(userID).emit("banned by admin", { roomID, roomName })
   })
 })
 

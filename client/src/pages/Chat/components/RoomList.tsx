@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import {
   addToInviteList,
+  removeRoom,
   selectRoom,
   userJoinedRoom,
 } from "src/core/features/user/userSlice";
@@ -22,6 +23,7 @@ import {
 } from "src/core/features/user/userApiSlice";
 import { toggleCreateRoomModal } from "src/core/features/user/userSlice";
 import { TUserInviteList } from "src/ts/types/user.types";
+import { toast } from "react-toastify";
 
 const RoomList = ({ socket }: any) => {
   const user: IUser = useSelector((state: any) => state.user);
@@ -74,6 +76,12 @@ const RoomList = ({ socket }: any) => {
         })
       );
     });
+
+    socket.on("banned by admin", (receiveData: any) => {
+      console.log(receiveData);
+      dispatch(removeRoom(receiveData.roomID));
+      toast.info(`you are banned from ${receiveData.roomName}`);
+    });
   }, []);
 
   return (
@@ -116,7 +124,7 @@ const RoomList = ({ socket }: any) => {
         </InviteList>
       )}
       {user.rooms.length === 0 ? (
-        <NoRoom>Create A Room</NoRoom>
+        <NoRoom>Join or create room!</NoRoom>
       ) : (
         <Rooms>
           {user.rooms.map((room: IRoom) => (
@@ -139,7 +147,7 @@ const HeaderText = tw.h5`font-Inter font-semibold text-xl`;
 const HeaderCreateRoomLogo = tw(
   PlusCircleIcon
 )`h-12 w-12 text-my-light-purple cursor-pointer`;
-const NoRoom = tw.h5`text-xl font-bold text-slate-600`;
+const NoRoom = tw.h5`text-xl font-semibold font-SFPro text-slate-600 p-5`;
 const Rooms = tw.div`p-5 flex flex-col scrollbar-thumb-my-light-purple/[.40] scrollbar-track-transparent scrollbar-thin scrollbar-thumb-rounded-md`;
 const Room = tw.div`flex mb-10 last:mb-0 cursor-pointer`;
 const RoomImage = tw(

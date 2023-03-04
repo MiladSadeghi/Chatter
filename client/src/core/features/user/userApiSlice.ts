@@ -67,7 +67,7 @@ const userApiSlice = apiSlice.injectEndpoints({
         method: "POST",
         body: { query, roomID }
       })
-    })
+    }),
   })
 })
 

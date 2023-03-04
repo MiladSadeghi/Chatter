@@ -17,11 +17,20 @@ const getUserRooms = async (req, res) => {
   if (!rooms) res.sendStatus(404);
   rooms.forEach(room => {
     const inviteList = [];
+    const blackList = [];
     users.forEach((user) => {
       room.inviteList.forEach((invitedUser, index) => {
         if (invitedUser.equals(user._id)) {
           inviteList.push({
-            id: user._id,
+            _id: user._id,
+            name: user.userName
+          })
+        }
+      })
+      room.blackList.forEach((bannedUserId, index) => {
+        if (bannedUserId.equals(user._id)) {
+          blackList.push({
+            _id: user._id,
             name: user.userName
           })
         }
@@ -37,6 +46,7 @@ const getUserRooms = async (req, res) => {
       })
     })
     room.inviteList = inviteList;
+    room.blackList = blackList;
   })
   res.status(200).json(rooms)
 }

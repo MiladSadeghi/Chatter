@@ -62,7 +62,10 @@ const userSlice = createSlice({
       state.rooms.push(action.payload)
     },
     addToInviteList: (state, action) => {
-      state.inviteList = [...state.inviteList, action.payload]
+      const isInvited = state.inviteList.find((invite: TUserInviteList) => invite._id === action.payload._id);
+      if (!isInvited) {
+        state.inviteList = [...state.inviteList, action.payload]
+      }
     },
     removeUserFromRoom: (state, action) => {
       const { payload } = action;
@@ -71,6 +74,7 @@ const userSlice = createSlice({
     },
     removeRoom: (state, action) => {
       const { payload } = action;
+      console.log(payload)
       state.rooms = state.rooms.filter((room: IRoom) => room._id !== payload)
     },
     userJoinedRoom: (state, action) => {
@@ -78,9 +82,20 @@ const userSlice = createSlice({
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
       state.rooms[roomIndex].inviteList = state.rooms[roomIndex].inviteList.filter((invitedUser: TRoomInviteList) => invitedUser._id !== payload.userID);
       state.rooms[roomIndex].users.push({ role: "7610", userId: payload.userID, userName: payload.userName })
+    },
+    addUserToBlackList: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].blackList.push({ _id: payload.userID, name: payload.userName });
+      state.rooms[roomIndex].users = state.rooms[roomIndex].users.filter((user: TRoomUser) => user.userId !== payload.userID)
+    },
+    removeUserFromBlacklist: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].blackList = state.rooms[roomIndex].blackList.filter((bannedUser) => bannedUser._id !== payload.userID)
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom, addUserToBlackList, removeUserFromBlacklist } = userSlice.actions;
 export default userSlice.reducer;
