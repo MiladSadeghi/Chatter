@@ -126,5 +126,15 @@ io.on("connection", (socket) => {
     const { roomID, userID, roomName } = receiveData;
     socket.to(userID).emit("banned by admin", { roomID, roomName })
   })
+
+  socket.on("delete room", async (receiveData) => {
+    const { roomName, roomID, roomUsers, myID } = receiveData;
+    roomUsers.forEach(user => {
+      console.log(user.userId)
+      if (user.userId !== myID) {
+        socket.to(user.userId).emit("remove room", { roomID, roomName })
+      }
+    })
+  })
 })
 

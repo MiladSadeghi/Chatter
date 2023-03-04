@@ -78,6 +78,11 @@ const RoomList = ({ socket }: any) => {
     });
 
     socket.on("banned by admin", (receiveData: any) => {
+      dispatch(removeRoom(receiveData.roomID));
+      toast.info(`you are banned from ${receiveData.roomName}`);
+    });
+
+    socket.on("remove room", (receiveData: any) => {
       console.log(receiveData);
       dispatch(removeRoom(receiveData.roomID));
       toast.info(`you are banned from ${receiveData.roomName}`);

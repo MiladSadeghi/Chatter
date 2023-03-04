@@ -1,6 +1,6 @@
 import { toast } from "react-toastify";
 import apiSlice from "../api/apiSlice";
-import { addRoom, addUserToBlackList, removeUserFromRoom } from "../user/userSlice";
+import { addRoom, addUserToBlackList, removeRoom, removeUserFromRoom } from "../user/userSlice";
 
 const roomApiSlice = apiSlice.injectEndpoints({
   endpoints: builder => ({
@@ -24,7 +24,11 @@ const roomApiSlice = apiSlice.injectEndpoints({
         url: "api/room/delete",
         method: "POST",
         body: { roomID }
-      })
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        await queryFulfilled;
+        dispatch(removeRoom(arg));
+      }
     }),
     editRoomName: builder.mutation<any, any>({
       query: ({ roomID, newRoomName }: { roomID: string, newRoomName: string }) => ({

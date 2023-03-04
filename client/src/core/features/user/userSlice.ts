@@ -74,7 +74,6 @@ const userSlice = createSlice({
     },
     removeRoom: (state, action) => {
       const { payload } = action;
-      console.log(payload)
       state.rooms = state.rooms.filter((room: IRoom) => room._id !== payload)
     },
     userJoinedRoom: (state, action) => {

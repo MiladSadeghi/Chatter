@@ -1,5 +1,9 @@
-import { PaperAirplaneIcon, UserGroupIcon } from "@heroicons/react/24/solid";
-import React, { useState, useEffect, useRef } from "react";
+import {
+  EllipsisVerticalIcon,
+  PaperAirplaneIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/solid";
+import React, { useState, useEffect, useRef, Fragment } from "react";
 import { useSelector } from "react-redux";
 import { IRoom } from "src/ts/interfaces/room.interfaces";
 import tw from "twin.macro";
@@ -12,11 +16,16 @@ import {
 import { IMessage } from "src/ts/interfaces/message.interfaces";
 import { toast } from "react-toastify";
 import ChatLoader from "src/common/ChatLoader";
+import { Menu, Transition } from "@headlessui/react";
+import { TRoomUser } from "src/ts/types/room.types";
+import { useDeleteRoomMutation } from "src/core/features/room/roomApiSlice";
+import { removeRoom } from "src/core/features/user/userSlice";
 const ChatContainer = ({ selectedRoom, socket }: any) => {
   const userID = useSelector((state: any) => state.user.userID);
   const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === selectedRoom
   );
+  const [isModerator, setIsModerator] = useState<boolean>(false);
 
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [inputValue, setInputValue] = useState<string>("");
@@ -24,6 +33,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
     useGetRoomMessageMutation();
   const [sendMessage] = useSendMessageMutation();
   const chatScroll: any = useRef();
+  const [deleteRoom] = useDeleteRoomMutation();
 
   const getMessages = async () => {
     try {
@@ -52,6 +62,13 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
         });
       }
     });
+
+    const userRole = Room.users.find(
+      (roomUser: TRoomUser) => roomUser.userId === userID
+    );
+    if (userRole?.role !== "7610") {
+      setIsModerator(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -70,6 +87,18 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
 
   const handleChange = (e: any) => {
     setInputValue(e.currentTarget.value);
+  };
+
+  const deleteRoomHandler = async () => {
+    try {
+      await deleteRoom(selectedRoom);
+      socket.emit("delete room", {
+        roomUsers: Room.users,
+        myID: userID,
+        roomID: Room._id,
+        roomName: Room.name,
+      });
+    } catch (error) {}
   };
 
   const submit = async () => {
@@ -101,6 +130,78 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
               <ChatHeader>
                 <ChatHeaderImg />
                 <ChatHeaderName>{Room.name}</ChatHeaderName>
+                <Menu
+                  as="div"
+                  className="relative ml-auto inline-block text-left"
+                >
+                  <div>
+                    <Menu.Button className="inline-flex w-full justify-center rounded-md text-sm font-medium">
+                      <EllipsisVerticalIcon width={32} className="text-black" />
+                    </Menu.Button>
+                  </div>
+
+                  <Transition
+                    as={Fragment}
+                    enter="transition ease-out duration-100"
+                    enterFrom="transform opacity-0 scale-95"
+                    enterTo="transform opacity-100 scale-100"
+                    leave="transition ease-in duration-75"
+                    leaveFrom="transform opacity-100 scale-100"
+                    leaveTo="transform opacity-0 scale-95"
+                  >
+                    <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <div className="py-1 px-1">
+                        {isModerator ? (
+                          <>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <h5
+                                  className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                    active
+                                      ? "bg-gray-100 text-gray-900"
+                                      : "text-gray-700"
+                                  }`}
+                                  // onClick={() => kickHandler(roomUser.userId)}
+                                >
+                                  rename room
+                                </h5>
+                              )}
+                            </Menu.Item>
+                            <Menu.Item>
+                              {({ active }) => (
+                                <h5
+                                  className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                    active
+                                      ? "bg-gray-100 text-gray-900"
+                                      : "text-gray-700"
+                                  }`}
+                                  onClick={deleteRoomHandler}
+                                >
+                                  delete room
+                                </h5>
+                              )}
+                            </Menu.Item>
+                          </>
+                        ) : (
+                          <Menu.Item>
+                            {({ active }) => (
+                              <h5
+                                className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                  active
+                                    ? "bg-gray-100 text-gray-900"
+                                    : "text-gray-700"
+                                }`}
+                              >
+                                leave room
+                              </h5>
+                            )}
+                          </Menu.Item>
+                        )}
+                      </div>
+                    </Menu.Items>
+                  </Transition>
+                </Menu>
+                {/* <EllipsisVerticalIcon width={32} className="ml-auto" /> */}
               </ChatHeader>
               <ChatBody>
                 <Messages ref={chatScroll}>
