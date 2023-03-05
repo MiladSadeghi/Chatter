@@ -55,19 +55,21 @@ const userAcceptInvite = async (req, res) => {
   const { body, userID } = req;
   if (!body.roomID || !userID) return res.status(406).json({ status: "error", message: "something missed!" });
 
-  const isUserInRoom = await RoomModel.find({ "users.userId": mongoose.Types.ObjectId(body.userID) });
-  if (isUserInRoom[0]) return res.status(404).json({ status: "error", message: "user already joined" });
-  const invitedRoom = await RoomModel.find({ _id: mongoose.Types.ObjectId(body.roomID) });
-  if (!invitedRoom[0]) return res.status(404).json({ status: "error", message: "not found any room with this id" });
-  await invitedRoom[0]._doc.inviteList.remove([userID])
+  const isUserInRoom = await RoomModel.findOne({ "users.userId": mongoose.Types.ObjectId(body.userID) });
+  if (isUserInRoom) return res.status(404).json({ status: "error", message: "user already joined" });
+  const invitedRoom = await RoomModel.findOne({ _id: mongoose.Types.ObjectId(body.roomID) });
+  if (!invitedRoom) return res.status(404).json({ status: "error", message: "not found any room with this id" });
+  const foundedUser = await UserModel.findOne({ _id: userID });
+  await invitedRoom._doc.inviteList.remove([userID])
   const userData = {
     userId: userID,
     role: "7610"
   }
-  invitedRoom[0].users.push(userData)
-  invitedRoom[0].save((err) => {
+  invitedRoom.users.push(userData)
+  invitedRoom.save((err) => {
     if (err) return res.status(408).json({ status: "error", message: "cant accept invite!" });
-    res.status(200).json({ "status": "success", "message": "you accept the invite", room: invitedRoom[0] });
+    userData.userName = foundedUser.userName;
+    res.status(200).json({ "status": "success", "message": "you accept the invite", room: invitedRoom });
   });
 }
 

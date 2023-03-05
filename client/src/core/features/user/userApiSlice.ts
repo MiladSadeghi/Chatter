@@ -40,6 +40,7 @@ const userApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           const { data } = await queryFulfilled;
+          console.log(data)
           dispatch(acceptInvite({ room: data.room, roomID: data.room._id }))
         } catch (error) {
           toast.error("cant accept the invite")
