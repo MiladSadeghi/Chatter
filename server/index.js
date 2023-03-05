@@ -130,9 +130,17 @@ io.on("connection", (socket) => {
   socket.on("delete room", async (receiveData) => {
     const { roomName, roomID, roomUsers, myID } = receiveData;
     roomUsers.forEach(user => {
-      console.log(user.userId)
       if (user.userId !== myID) {
         socket.to(user.userId).emit("remove room", { roomID, roomName })
+      }
+    })
+  })
+
+  socket.on("change room name", (receiveData) => {
+    const { newRoomName, roomID, roomUsers, myID } = receiveData;
+    roomUsers.forEach(user => {
+      if (user.userId !== myID) {
+        socket.to(user.userId).emit("room name changed", { roomID, newRoomName })
       }
     })
   })

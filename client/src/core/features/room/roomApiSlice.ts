@@ -32,7 +32,7 @@ const roomApiSlice = apiSlice.injectEndpoints({
     }),
     editRoomName: builder.mutation<any, any>({
       query: ({ roomID, newRoomName }: { roomID: string, newRoomName: string }) => ({
-        url: "api/room/delete",
+        url: "api/room/name",
         method: "POST",
         body: { roomID, newRoomName }
       })

@@ -9,6 +9,7 @@ import CreateRoomModal from "./components/CreateRoomModal";
 import { AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import {
+  changeRoomName,
   deleteFromRoomInviteList,
   removeRoom,
 } from "src/core/features/user/userSlice";
@@ -45,6 +46,16 @@ const Chat = () => {
         deleteFromRoomInviteList({
           roomID: receiveData.roomID,
           userID: receiveData.userID,
+        })
+      );
+    });
+
+    socket.on("room name changed", (receiveData: any) => {
+      console.log(receiveData);
+      dispatch(
+        changeRoomName({
+          roomID: receiveData.roomID,
+          newRoomName: receiveData.newRoomName,
         })
       );
     });

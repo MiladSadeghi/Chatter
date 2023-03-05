@@ -92,9 +92,15 @@ const userSlice = createSlice({
       const { payload } = action;
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
       state.rooms[roomIndex].blackList = state.rooms[roomIndex].blackList.filter((bannedUser) => bannedUser._id !== payload.userID)
+    },
+    changeRoomName: (state, action) => {
+      const { payload } = action;
+      console.log(payload)
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].name = payload.newRoomName;
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom, addUserToBlackList, removeUserFromBlacklist } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom, addUserToBlackList, removeUserFromBlacklist, changeRoomName } = userSlice.actions;
 export default userSlice.reducer;

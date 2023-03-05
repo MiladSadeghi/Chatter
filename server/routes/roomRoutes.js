@@ -9,7 +9,7 @@ roomRoutes.use(verifyJWT)
 roomRoutes.post("/room", createRoom);
 
 roomRoutes.post("/room/delete", isOwner("delete"), deleteRoom);
-roomRoutes.put("/room/", isOwner("edit-room-name"), editRoomName)
+roomRoutes.post("/room/name", isOwner("edit-room-name"), editRoomName)
 
 roomRoutes.put("/room/invite", isModerator("invite-list"), inviteUserToRoom);
 roomRoutes.put("/room/blacklist", isModerator("black-list"), addUserToRoomBlacklist);

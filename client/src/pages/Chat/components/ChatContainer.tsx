@@ -18,8 +18,12 @@ import { toast } from "react-toastify";
 import ChatLoader from "src/common/ChatLoader";
 import { Menu, Transition } from "@headlessui/react";
 import { TRoomUser } from "src/ts/types/room.types";
-import { useDeleteRoomMutation } from "src/core/features/room/roomApiSlice";
-import { removeRoom } from "src/core/features/user/userSlice";
+import {
+  useDeleteRoomMutation,
+  useEditRoomNameMutation,
+} from "src/core/features/room/roomApiSlice";
+import { changeRoomName } from "src/core/features/user/userSlice";
+import { useDispatch } from "react-redux";
 const ChatContainer = ({ selectedRoom, socket }: any) => {
   const userID = useSelector((state: any) => state.user.userID);
   const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
@@ -34,6 +38,8 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   const [sendMessage] = useSendMessageMutation();
   const chatScroll: any = useRef();
   const [deleteRoom] = useDeleteRoomMutation();
+  const [editRoomName] = useEditRoomNameMutation();
+  const dispatch = useDispatch();
 
   const getMessages = async () => {
     try {
@@ -101,6 +107,24 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
     } catch (error) {}
   };
 
+  const changeRoomNameHandler = async () => {
+    try {
+      const newName = prompt("enter new room name");
+      if (newName && newName !== "") {
+        await editRoomName({ roomID: selectedRoom, newRoomName: newName });
+        dispatch(
+          changeRoomName({ roomID: selectedRoom, newRoomName: newName })
+        );
+        socket.emit("change room name", {
+          roomID: selectedRoom,
+          newRoomName: newName,
+          roomUsers: Room.users,
+          myID: userID,
+        });
+      }
+    } catch (error) {}
+  };
+
   const submit = async () => {
     if (inputValue !== "") {
       try {
@@ -161,7 +185,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                                       ? "bg-gray-100 text-gray-900"
                                       : "text-gray-700"
                                   }`}
-                                  // onClick={() => kickHandler(roomUser.userId)}
+                                  onClick={() => changeRoomNameHandler()}
                                 >
                                   rename room
                                 </h5>
@@ -201,7 +225,6 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                     </Menu.Items>
                   </Transition>
                 </Menu>
-                {/* <EllipsisVerticalIcon width={32} className="ml-auto" /> */}
               </ChatHeader>
               <ChatBody>
                 <Messages ref={chatScroll}>
