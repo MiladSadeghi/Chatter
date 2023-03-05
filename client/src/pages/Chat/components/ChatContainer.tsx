@@ -21,8 +21,9 @@ import { TRoomUser } from "src/ts/types/room.types";
 import {
   useDeleteRoomMutation,
   useEditRoomNameMutation,
+  useUserLeaveRoomMutation,
 } from "src/core/features/room/roomApiSlice";
-import { changeRoomName } from "src/core/features/user/userSlice";
+import { changeRoomName, removeRoom } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
 const ChatContainer = ({ selectedRoom, socket }: any) => {
   const userID = useSelector((state: any) => state.user.userID);
@@ -40,6 +41,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   const [deleteRoom] = useDeleteRoomMutation();
   const [editRoomName] = useEditRoomNameMutation();
   const dispatch = useDispatch();
+  const [userLeaveRoom] = useUserLeaveRoomMutation();
 
   const getMessages = async () => {
     try {
@@ -123,6 +125,20 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
         });
       }
     } catch (error) {}
+  };
+
+  const leaveRoomHandler = async () => {
+    if (window.confirm("you sure you want leave the room?")) {
+      try {
+        await userLeaveRoom({ roomID: selectedRoom, userID: userID });
+        dispatch(removeRoom(selectedRoom));
+        socket.emit("user leave the room", {
+          roomID: selectedRoom,
+          userID: userID,
+          roomUsers: Room.users,
+        });
+      } catch (error) {}
+    }
   };
 
   const submit = async () => {
@@ -215,6 +231,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
                                 }`}
+                                onClick={leaveRoomHandler}
                               >
                                 leave room
                               </h5>

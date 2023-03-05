@@ -140,4 +140,19 @@ const unBanUser = async (req, res) => {
   });
 }
 
-export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist, cancelUserInvite, kickUserFromRoom, unBanUser };
+const userLeaveRoom = async (req, res) => {
+  const { body } = req;
+  if (!body.roomID || !body.userID) return res.status(406).json({ status: "error", message: "something missed!" });
+  const foundedRoom = await RoomModel.findOne({ _id: body.roomID });
+  if (foundedRoom) {
+    foundedRoom.users = foundedRoom.users.filter(user => user.userId !== body.userID);
+    foundedRoom.save(err => {
+      if (err) return res.status(404).json({ status: "error", message: "you cant leave room now!" });
+      return res.status(200).json({ status: "success", message: "you leave room successfully" })
+    })
+  } else {
+    return res.status(404).json({ status: "error", message: "cant find that room" })
+  }
+}
+
+export { createRoom, deleteRoom, editRoomName, inviteUserToRoom, addUserToRoomBlacklist, cancelUserInvite, kickUserFromRoom, unBanUser, userLeaveRoom };

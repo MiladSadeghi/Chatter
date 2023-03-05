@@ -12,6 +12,7 @@ import {
   changeRoomName,
   deleteFromRoomInviteList,
   removeRoom,
+  removeUserFromRoom,
 } from "src/core/features/user/userSlice";
 import { toast } from "react-toastify";
 
@@ -51,11 +52,19 @@ const Chat = () => {
     });
 
     socket.on("room name changed", (receiveData: any) => {
-      console.log(receiveData);
       dispatch(
         changeRoomName({
           roomID: receiveData.roomID,
           newRoomName: receiveData.newRoomName,
+        })
+      );
+    });
+
+    socket.on("user leave the room", (receiveData: any) => {
+      dispatch(
+        removeUserFromRoom({
+          roomID: receiveData.roomID,
+          userID: receiveData.userID,
         })
       );
     });

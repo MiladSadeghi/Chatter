@@ -67,7 +67,7 @@ const roomApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          dispatch(removeUserFromRoom({ roomID: arg.roomID, kickedUserID: arg.kickedUserID }))
+          dispatch(removeUserFromRoom({ roomID: arg.roomID, userID: arg.kickedUserID }))
           toast.success("user kicked successfully")
         } catch (error) {
           toast.success("cant kick user! try again later")
@@ -79,6 +79,13 @@ const roomApiSlice = apiSlice.injectEndpoints({
         url: "api/room/unban-user",
         method: "POST",
         body: { bannedUserId: userID, roomID }
+      })
+    }),
+    userLeaveRoom: builder.mutation({
+      query: ({ roomID, userID }: { roomID: string, userID: string }) => ({
+        url: "api/room/leave",
+        method: "POST",
+        body: { roomID, userID }
       })
     })
   })
@@ -92,5 +99,6 @@ export const {
   useBannedUserMutation,
   useCancelInviteMutation,
   useKickUserMutation,
-  useUnBannedRoomUserMutation
+  useUnBannedRoomUserMutation,
+  useUserLeaveRoomMutation
 } = roomApiSlice;

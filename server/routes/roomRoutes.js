@@ -1,5 +1,5 @@
 import express from "express";
-import { addUserToRoomBlacklist, cancelUserInvite, createRoom, deleteRoom, editRoomName, inviteUserToRoom, kickUserFromRoom, unBanUser } from "../controller/roomController.js";
+import { addUserToRoomBlacklist, cancelUserInvite, createRoom, deleteRoom, editRoomName, inviteUserToRoom, kickUserFromRoom, unBanUser, userLeaveRoom } from "../controller/roomController.js";
 import verifyJWT from "../middleware/verifyJWT.js";
 import { isModerator, isOwner } from "../middleware/verifyRules.js";
 
@@ -7,6 +7,7 @@ const roomRoutes = express.Router();
 
 roomRoutes.use(verifyJWT)
 roomRoutes.post("/room", createRoom);
+roomRoutes.post("/room/leave", userLeaveRoom)
 
 roomRoutes.post("/room/delete", isOwner("delete"), deleteRoom);
 roomRoutes.post("/room/name", isOwner("edit-room-name"), editRoomName)

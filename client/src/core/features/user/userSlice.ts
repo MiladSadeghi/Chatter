@@ -70,7 +70,7 @@ const userSlice = createSlice({
     removeUserFromRoom: (state, action) => {
       const { payload } = action;
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
-      state.rooms[roomIndex].users = state.rooms[roomIndex].users.filter((user: TRoomUser) => user.userId !== payload.kickedUserID)
+      state.rooms[roomIndex].users = state.rooms[roomIndex].users.filter((user: TRoomUser) => user.userId !== payload.userID)
     },
     removeRoom: (state, action) => {
       const { payload } = action;

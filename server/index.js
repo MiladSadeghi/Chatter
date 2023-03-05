@@ -144,5 +144,14 @@ io.on("connection", (socket) => {
       }
     })
   })
+
+  socket.on("user leave the room", (receiveData) => {
+    const { roomID, roomUsers, userID } = receiveData;
+    roomUsers.forEach(user => {
+      if (user.userId !== userID) {
+        socket.to(user.userId).emit("user leave the room", { roomID, userID })
+      }
+    })
+  })
 })
 
