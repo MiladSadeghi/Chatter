@@ -1,4 +1,5 @@
 import { TUserInviteList } from "../types/user.types";
+import { IMessage } from "./message.interfaces";
 import { IRoom } from "./room.interfaces";
 
 export interface IUser {
@@ -8,5 +9,6 @@ export interface IUser {
   directoryIsOpen: Boolean,
   userName: string | null,
   userID: string | null,
-  isCreateRoomModalShow: Boolean
+  isCreateRoomModalShow: Boolean,
+  messages: IMessage[]
 }

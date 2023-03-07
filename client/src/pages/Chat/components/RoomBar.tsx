@@ -28,7 +28,6 @@ import {
   deleteFromRoomInviteList,
   ignoreInvite,
   removeUserFromBlacklist,
-  userJoinedRoom,
 } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
@@ -204,7 +203,7 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                           <Menu.Item>
                             {({ active }) => (
                               <h5
-                                className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                className={`"block text-sm" cursor-pointer rounded-md px-4 py-2 font-Inter ${
                                   active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
@@ -218,7 +217,7 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                           <Menu.Item>
                             {({ active }) => (
                               <h5
-                                className={`"block text-sm" rounded-md px-4 py-2 font-Inter ${
+                                className={`"block text-sm" cursor-pointer rounded-md px-4 py-2 font-Inter ${
                                   active
                                     ? "bg-gray-100 text-gray-900"
                                     : "text-gray-700"
@@ -288,7 +287,7 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                                   />
                                 ) : (
                                   <UserPlusIcon
-                                    className="ml-auto mr-2 w-6 cursor-pointer font-bold text-gray-800"
+                                    className="ml-auto mr-2 w-6 cursor-pointer font-bold text-gray-800 dark:text-white"
                                     onClick={() =>
                                       handleInvite(user._id, user.userName)
                                     }
@@ -362,22 +361,21 @@ const Wrapper = styled.div`
 const Headers = tw.div`flex items-center justify-between w-full min-h-[80px] border-b px-4`;
 
 const HeaderName = styled.h3`
-  ${tw`font-Inter font-bold transition-none ease-in-out duration-200 transition-[color, font-size] cursor-pointer`} ${({
+  ${tw`font-Inter font-bold transition-none ease-in-out duration-200 transition-[color, font-size] cursor-pointer text-gray-500 text-xs`} ${({
     tabNumber,
     tabState,
   }: {
     tabNumber: number;
     tabState: number;
-  }) =>
-    tabNumber === tabState ? tw`text-xl text-black` : tw`text-gray-500 text-xs`}
+  }) => tabNumber === tabState && tw`!text-xl !text-black dark:!text-white`}
 `;
 
-const Count = tw.h5`font-bold font-Inter text-sm flex items-center mb-2`;
-const CountNumber = tw.span`bg-gray-200 rounded-full w-6 h-6 text-center ml-2 text-xs flex items-center justify-center`;
+const Count = tw.h5`font-bold font-Inter text-sm flex items-center mb-2 dark:text-white`;
+const CountNumber = tw.span`bg-gray-200 rounded-full w-6 h-6 text-center ml-2 text-xs flex items-center justify-center text-black`;
 
 const RoomMembers = tw.div`overflow-auto h-full`;
 const RoomMember = tw.div`px-2 py-3 flex items-center `;
-const MemberName = tw.h3`text-sm font-Inter ml-3 font-semibold`;
+const MemberName = tw.h3`text-sm font-Inter ml-3 font-semibold dark:text-white`;
 const MemberAvatar = tw(
   UserIcon
 )`w-12 h-12 bg-slate-400 text-white rounded-xl p-2`;
@@ -396,6 +394,6 @@ const SearchButton = tw(
 )`w-5 h-5 absolute right-3 top-[7px] text-gray-400 cursor-pointer`;
 const SearchResponse = tw.div`w-full rounded bg-my-light-purple/[0.5] mt-4 `;
 const SearchRLoading = tw.div`py-4  flex items-center justify-center`;
-const SearchErrorMessage = tw.p`font-semibold text-xl text-black text-center px-4 py-2 font-Inter`;
+const SearchErrorMessage = tw.p`font-semibold text-xl text-black text-center px-4 py-2 font-Inter dark:text-white`;
 
 export default RoomBar;

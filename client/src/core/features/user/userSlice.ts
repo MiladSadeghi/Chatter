@@ -11,7 +11,8 @@ const initialState: IUser = {
   directoryIsOpen: false,
   userName: null,
   userID: null,
-  isCreateRoomModalShow: false
+  isCreateRoomModalShow: false,
+  messages: [],
 }
 
 const userSlice = createSlice({
@@ -95,12 +96,21 @@ const userSlice = createSlice({
     },
     changeRoomName: (state, action) => {
       const { payload } = action;
-      console.log(payload)
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
       state.rooms[roomIndex].name = payload.newRoomName;
+    },
+    setRoomMessages: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].messages = payload.messages;
+    },
+    addRoomMessage: (state, action) => {
+      const { payload } = action;
+      const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
+      state.rooms[roomIndex].messages.push(payload.newMessage)
     }
   }
 })
 
-export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom, addUserToBlackList, removeUserFromBlacklist, changeRoomName } = userSlice.actions;
+export const { setRooms, setInviteList, selectRoom, setDirectory, setCredentials, acceptInvite, ignoreInvite, addUserToRoomInviteList, deleteFromRoomInviteList, toggleCreateRoomModal, addRoom, addToInviteList, removeUserFromRoom, removeRoom, userJoinedRoom, addUserToBlackList, removeUserFromBlacklist, changeRoomName, setRoomMessages, addRoomMessage } = userSlice.actions;
 export default userSlice.reducer;

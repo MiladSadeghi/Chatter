@@ -74,11 +74,11 @@ io.on("connection", (socket) => {
     const message = receiveData.response;
 
     if (!users) return console.log("chat.users not defined");
-
+    console.log(users, message)
     users.forEach(user => {
       if (user.userId !== message.senderID) {
-        console.log(`i send message to ${user.userId}`)
-        socket.in(user.userId).emit("message received", { ...message })
+        console.log(`i send message to ${user.userId}`);
+        socket.broadcast.to(user.userId).emit("new message", { ...message })
       }
     })
   })

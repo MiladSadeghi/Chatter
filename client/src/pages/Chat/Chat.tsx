@@ -9,12 +9,15 @@ import CreateRoomModal from "./components/CreateRoomModal";
 import { AnimatePresence } from "framer-motion";
 import { useDispatch } from "react-redux";
 import {
+  addRoomMessage,
   changeRoomName,
   deleteFromRoomInviteList,
   removeRoom,
   removeUserFromRoom,
+  selectRoom,
 } from "src/core/features/user/userSlice";
 import { toast } from "react-toastify";
+import { IMessage } from "src/ts/interfaces/message.interfaces";
 
 let socket: any;
 
@@ -38,6 +41,7 @@ const Chat = () => {
     socket.emit("setup", currentUserID);
 
     socket.on("user kicked", (receiveData: any) => {
+      dispatch(selectRoom(null));
       dispatch(removeRoom(receiveData));
       toast.info("you are kicked from a room");
     });
@@ -68,15 +72,22 @@ const Chat = () => {
         })
       );
     });
+
+    socket.on("new message", (newMessageReceived: IMessage) => {
+      dispatch(
+        addRoomMessage({
+          roomID: newMessageReceived.roomID,
+          newMessage: newMessageReceived,
+        })
+      );
+    });
   }, []);
 
   return (
     <Wrapper>
       <ProfileBar />
       <RoomList socket={socket} />
-      {selectedRoom && (
-        <ChatContainer selectedRoom={selectedRoom} socket={socket} />
-      )}
+      {selectedRoom && <ChatContainer socket={socket} />}
       <AnimatePresence>
         {isCreateRoomModalOpen && <CreateRoomModal />}
       </AnimatePresence>
@@ -84,6 +95,6 @@ const Chat = () => {
   );
 };
 
-const Wrapper = tw.div`flex h-screen`;
+const Wrapper = tw.div`flex h-screen dark:bg-[#171821]`;
 
 export default Chat;

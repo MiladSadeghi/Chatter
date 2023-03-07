@@ -23,16 +23,24 @@ import {
   useEditRoomNameMutation,
   useUserLeaveRoomMutation,
 } from "src/core/features/room/roomApiSlice";
-import { changeRoomName, removeRoom } from "src/core/features/user/userSlice";
+import {
+  addRoomMessage,
+  changeRoomName,
+  removeRoom,
+  setRoomMessages,
+} from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
-const ChatContainer = ({ selectedRoom, socket }: any) => {
+const ChatContainer = ({ socket }: any) => {
+  const selectedRoom: string = useSelector(
+    (state: any) => state.user.selectedRoomID
+  );
   const userID = useSelector((state: any) => state.user.userID);
   const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === selectedRoom
   );
   const [isModerator, setIsModerator] = useState<boolean>(false);
 
-  const [messages, setMessages] = useState<IMessage[]>([]);
+  const [messages, setMessages] = useState<IMessage[]>(Room.messages);
   const [inputValue, setInputValue] = useState<string>("");
   const [getRoomMessage, { isLoading, isSuccess }] =
     useGetRoomMessageMutation();
@@ -46,11 +54,15 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   const getMessages = async () => {
     try {
       const data = await getRoomMessage(selectedRoom as string).unwrap();
-      setMessages(data);
+      dispatch(setRoomMessages({ roomID: Room._id, messages: data }));
     } catch (error) {
       toast.error("refresh the page!");
     }
   };
+
+  useEffect(() => {
+    console.log(Room);
+  }, [Room.messages]);
 
   useEffect(() => {
     document.title = `Chatter - ${Room.name}`;
@@ -63,14 +75,6 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
   }, [selectedRoom]);
 
   useEffect(() => {
-    socket.on("message received", (newMessageReceived: IMessage) => {
-      if (newMessageReceived.roomID === selectedRoom) {
-        setMessages((prev: IMessage[]) => {
-          return [...prev, newMessageReceived];
-        });
-      }
-    });
-
     const userRole = Room.users.find(
       (roomUser: TRoomUser) => roomUser.userId === userID
     );
@@ -85,7 +89,7 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
         chatScroll.current.scrollTop = chatScroll.current.scrollHeight;
       }, 200);
     }
-  }, [messages, isSuccess]);
+  }, [Room.messages, isSuccess]);
 
   const enterPressed = (e: any) => {
     if (e.keyCode === 13) {
@@ -148,7 +152,9 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
           message: inputValue,
           roomID: selectedRoom,
         }).unwrap();
-        setMessages([...messages, response.message]);
+        dispatch(
+          addRoomMessage({ roomID: Room._id, newMessage: response.message })
+        );
         socket.emit("new message", {
           users: Room.users,
           response: response.message,
@@ -176,7 +182,10 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
                 >
                   <div>
                     <Menu.Button className="inline-flex w-full justify-center rounded-md text-sm font-medium">
-                      <EllipsisVerticalIcon width={32} className="text-black" />
+                      <EllipsisVerticalIcon
+                        width={32}
+                        className="text-black dark:text-white"
+                      />
                     </Menu.Button>
                   </div>
 
@@ -245,22 +254,23 @@ const ChatContainer = ({ selectedRoom, socket }: any) => {
               </ChatHeader>
               <ChatBody>
                 <Messages ref={chatScroll}>
-                  {messages.map((message: IMessage) => {
-                    if (message.senderID === userID) {
-                      return (
-                        <MyMessage key={message._id}>
-                          <MessageBody>{message.message}</MessageBody>
-                        </MyMessage>
-                      );
-                    } else {
-                      return (
-                        <MemberMessage key={message._id}>
-                          <SenderMessage>{message.senderName}</SenderMessage>
-                          <MessageBody>{message.message}</MessageBody>
-                        </MemberMessage>
-                      );
-                    }
-                  })}
+                  {Room.messages &&
+                    Room.messages.map((message: IMessage) => {
+                      if (message.senderID === userID) {
+                        return (
+                          <MyMessage key={message._id}>
+                            <MessageBody>{message.message}</MessageBody>
+                          </MyMessage>
+                        );
+                      } else {
+                        return (
+                          <MemberMessage key={message._id}>
+                            <SenderMessage>{message.senderName}</SenderMessage>
+                            <MessageBody>{message.message}</MessageBody>
+                          </MemberMessage>
+                        );
+                      }
+                    })}
                 </Messages>
               </ChatBody>
               <ChatInputWrapper>
@@ -287,7 +297,7 @@ const ChatHeader = tw.div`flex border-b min-h-[80px] px-4 items-center`;
 const ChatHeaderImg = tw(
   UserGroupIcon
 )`w-10 h-10 p-2 bg-slate-400 rounded-full mr-3 text-white`;
-const ChatHeaderName = tw.h3`font-Inter font-bold text-xl`;
+const ChatHeaderName = tw.h3`font-Inter font-bold text-xl dark:text-white`;
 const ChatBody = tw.div` flex flex-col h-full`;
 const Messages = tw.div`h-full flex flex-col scrollbar-thumb-my-light-purple/[.40] scrollbar-track-transparent scrollbar-thin scrollbar-thumb-rounded-md flex-[1_1_0] px-6 pb-0 pt-3`;
 const MyMessage = tw.div` py-3 px-5 text-white  bg-my-light-purple text-sm self-end rounded-2xl max-w-[50%] mb-4 last:mb-0`;

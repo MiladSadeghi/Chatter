@@ -3,7 +3,7 @@ import {
   UserGroupIcon,
   XCircleIcon,
 } from "@heroicons/react/24/outline";
-import { PlusCircleIcon } from "@heroicons/react/24/solid";
+import { PlusSmallIcon } from "@heroicons/react/24/solid";
 import React, { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
@@ -105,19 +105,21 @@ const RoomList = ({ socket }: any) => {
             </p>
             {user.inviteList.map((invitedRoom: TUserInviteList) => (
               <InviteListRoom key={invitedRoom._id}>
-                <Room className="w-full rounded-lg bg-white px-2 py-3">
+                <Room className="w-full !cursor-default rounded-lg bg-white px-2 py-3">
                   <RoomImage />
                   <div className="flex w-full items-center justify-between">
-                    <RoomName>{invitedRoom.name}</RoomName>
+                    <RoomName className="!text-black">
+                      {invitedRoom.name}
+                    </RoomName>
                     <div className="flex">
                       <CheckCircleIcon
                         width={24}
-                        className="mr-1 rounded-full bg-green-600 text-white"
+                        className="mr-1 cursor-pointer rounded-full bg-green-600 text-white"
                         onClick={() => acceptInvite(invitedRoom._id)}
                       />
                       <XCircleIcon
                         width={24}
-                        className="rounded-full bg-red-600 text-white"
+                        className="cursor-pointer rounded-full bg-red-600 text-white"
                         onClick={() => ignoreInvite(invitedRoom._id)}
                       />
                     </div>
@@ -146,19 +148,19 @@ const RoomList = ({ socket }: any) => {
   );
 };
 
-const Wrapper = tw.div`min-w-[20%] h-full border-r flex flex-col`;
+const Wrapper = tw.div`min-w-[20%] h-full border-r flex flex-col dark:bg-[#1c1d26]`;
 const Header = tw.div`p-5 flex items-center justify-between border-b`;
-const HeaderText = tw.h5`font-Inter font-semibold text-xl`;
+const HeaderText = tw.h5`font-Inter font-semibold text-xl dark:text-white`;
 const HeaderCreateRoomLogo = tw(
-  PlusCircleIcon
-)`h-12 w-12 text-my-light-purple cursor-pointer`;
-const NoRoom = tw.h5`text-xl font-semibold font-SFPro text-slate-600 p-5`;
+  PlusSmallIcon
+)`h-6 w-6 p-2 bg-my-light-purple text-white cursor-pointer rounded-full box-content`;
+const NoRoom = tw.h5`text-xl font-semibold font-SFPro text-slate-600 p-5 dark:text-slate-400`;
 const Rooms = tw.div`p-5 flex flex-col scrollbar-thumb-my-light-purple/[.40] scrollbar-track-transparent scrollbar-thin scrollbar-thumb-rounded-md`;
-const Room = tw.div`flex mb-10 last:mb-0 cursor-pointer`;
+const Room = tw.div`flex mb-10 last:mb-0 cursor-pointer `;
 const RoomImage = tw(
   UserGroupIcon
-)`w-10 h-10 p-2 bg-slate-400 rounded-full mr-3 text-white`;
-const RoomName = tw.h4`font-Inter text-sm font-bold`;
+)`max-w-[32px] max-h-8 p-2 bg-slate-400 rounded-full mr-3 text-white box-content`;
+const RoomName = tw.h4`font-Inter text-sm font-bold dark:text-white`;
 
 const InviteList = tw.div`flex flex-col p-5`;
 const InviteListRoom = tw.div`px-2 py-3 flex items-center `;
