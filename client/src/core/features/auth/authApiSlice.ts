@@ -1,5 +1,5 @@
 import apiSlice from "../api/apiSlice";
-import { setToken } from "./authSlice";
+import { logOut, setToken } from "./authSlice";
 import jwt_decode from "jwt-decode";
 import { setCredentials } from "../user/userSlice";
 import { toast } from "react-toastify";
@@ -48,6 +48,19 @@ const authApiSlice = apiSlice.injectEndpoints({
         }
       }
     }),
+    logout: builder.mutation<any, void>({
+      query: () => ({
+        url: "api/auth/logout",
+        method: "GET"
+      }),
+      async onQueryStarted(arg, { dispatch, queryFulfilled }) {
+        try {
+          await queryFulfilled;
+          dispatch(logOut())
+          toast.success("logged out successfully")
+        } catch (error) { }
+      }
+    })
   }),
   overrideExisting: true,
 })
@@ -55,5 +68,6 @@ const authApiSlice = apiSlice.injectEndpoints({
 export const {
   useSignUpMutation,
   useSignInMutation,
-  useRefreshMutation
+  useRefreshMutation,
+  useLogoutMutation
 } = authApiSlice
