@@ -14,7 +14,11 @@ import { useSelector } from "react-redux";
 import { useUserSearchMutation } from "src/core/features/user/userApiSlice";
 import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { MagnifyingGlass, Oval } from "react-loader-spinner";
-import { UserPlusIcon, XCircleIcon } from "@heroicons/react/24/outline";
+import {
+  ChevronRightIcon,
+  UserPlusIcon,
+  XCircleIcon,
+} from "@heroicons/react/24/outline";
 import {
   useKickUserMutation,
   useCancelInviteMutation,
@@ -32,15 +36,22 @@ import {
 import { useDispatch } from "react-redux";
 import { toast } from "react-toastify";
 import { Menu, Transition } from "@headlessui/react";
+import ModeratorRoomBar from "src/common/ModeratorRoomBar";
+import useMediaQuery from "src/hooks/useMediaQuery";
 
-const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
+const RoomBar = ({ RoomID, socket, isMenuOpen, setIsMenuOpen }: any) => {
   const dispatch = useDispatch();
   const Room: IRoom = useSelector((state: any) => state.user.rooms).find(
     (room: IRoom) => room._id === RoomID
   );
-  const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(true);
+  const tabs = [
+    { name: "Invite List", tabNumber: 0 },
+    { name: "Room", tabNumber: 1 },
+    { name: "Black List", tabNumber: 2 },
+  ];
+  const mediaQueryDesktop = useMediaQuery("(max-width:1024px)");
   const [isModerator, setIsModerator] = useState<boolean>(false);
-  const [tab, setTab] = useState<number>(1);
+  const [selectedTab, setSelectedTab] = useState(tabs[1]);
   const listsOverflow = useRef<any>();
   const user: IUser = useSelector((state: any) => state.user);
   const [userSearch, { data, isLoading, isError, error, isUninitialized }] =
@@ -67,18 +78,18 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
     socket.on("invite canceled by admin", (roomID: string) => {
       dispatch(ignoreInvite(roomID));
     });
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    listsOverflow.current.scrollLeft = listsOverflow.current.clientWidth * tab;
-  }, [tab]);
+    listsOverflow.current.scrollLeft =
+      listsOverflow.current.clientWidth * selectedTab.tabNumber;
+  }, [selectedTab]);
 
   useEffect(() => {
     setUserSearchData(data);
   }, [data]);
-
-  const changeTab = (tabNumber: number) => setTab(tabNumber);
 
   const handleSearch = async () => {
     if (searchInputValue !== "") {
@@ -143,31 +154,21 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
   };
 
   return (
-    <Wrapper isMenuOpen={isMenuOpen}>
-      <Headers>
-        <HeaderName tabNumber={1} tabState={tab} onClick={() => changeTab(1)}>
-          Directory
-        </HeaderName>
-        {isModerator && (
-          <>
-            <HeaderName
-              tabNumber={0}
-              tabState={tab}
-              onClick={() => changeTab(0)}
-              className="-order-1 flex"
-            >
-              Invite List
-            </HeaderName>
-            <HeaderName
-              tabNumber={2}
-              tabState={tab}
-              onClick={() => changeTab(2)}
-            >
-              Black List
-            </HeaderName>
-          </>
+    <Wrapper isMenuOpen={isMenuOpen} query={mediaQueryDesktop}>
+      <Header>
+        {mediaQueryDesktop && (
+          <ChevronRightIcon
+            width={32}
+            onClick={() => setIsMenuOpen(!isMenuOpen)}
+            className="mr-3 text-white"
+          />
         )}
-      </Headers>
+        <ModeratorRoomBar
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+          tabs={tabs}
+        />
+      </Header>
       <ContentWrapper ref={listsOverflow}>
         <Directory>
           <RoomMembers>
@@ -198,7 +199,7 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
                       leaveFrom="transform opacity-100 scale-100"
                       leaveTo="transform opacity-0 scale-95"
                     >
-                      <Menu.Items className="absolute right-0 z-10 mt-2 w-56 origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+                      <Menu.Items className="absolute right-0 z-10 mt-2 w-auto origin-top-right divide-y divide-gray-100 rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
                         <div className="py-1 px-1">
                           <Menu.Item>
                             {({ active }) => (
@@ -353,22 +354,16 @@ const RoomBar = ({ RoomID, socket }: { RoomID: string; socket: any }) => {
 };
 
 const Wrapper = styled.div`
-  ${tw`ease-in-out duration-300 border-l flex flex-col `};
-  ${({ isMenuOpen }: { isMenuOpen: Boolean }) =>
-    isMenuOpen ? tw`min-w-[20%]` : tw`w-20`}
+  ${tw`border-l flex flex-col  h-full bg-[#171821]`}
+  ${({ isMenuOpen, query }: { isMenuOpen: Boolean; query: Boolean }) => [
+    isMenuOpen
+      ? query && tw`min-w-full md:min-w-[50%]`
+      : query && tw`max-w-0 hidden`,
+    query ? tw`absolute right-0` : tw`min-w-[20%]`,
+  ]}
 `;
 
-const Headers = tw.div`flex items-center justify-between w-full min-h-[80px] border-b px-4`;
-
-const HeaderName = styled.h3`
-  ${tw`font-Inter font-bold transition-none ease-in-out duration-200 transition-[color, font-size] cursor-pointer text-gray-500 text-xs`} ${({
-    tabNumber,
-    tabState,
-  }: {
-    tabNumber: number;
-    tabState: number;
-  }) => tabNumber === tabState && tw`!text-xl !text-black dark:!text-white`}
-`;
+const Header = tw.div`flex items-center justify-between w-full min-h-[80px] border-b px-4`;
 
 const Count = tw.h5`font-bold font-Inter text-sm flex items-center mb-2 dark:text-white`;
 const CountNumber = tw.span`bg-gray-200 rounded-full w-6 h-6 text-center ml-2 text-xs flex items-center justify-center text-black`;

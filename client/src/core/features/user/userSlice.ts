@@ -12,7 +12,7 @@ const initialState: IUser = {
   userName: null,
   userID: null,
   isCreateRoomModalShow: false,
-  messages: [],
+  messages: []
 }
 
 const userSlice = createSlice({
@@ -108,7 +108,7 @@ const userSlice = createSlice({
       const { payload } = action;
       const roomIndex = state.rooms.findIndex((room: IRoom) => room._id === payload.roomID);
       state.rooms[roomIndex].messages.push(payload.newMessage)
-    }
+    },
   }
 })
 

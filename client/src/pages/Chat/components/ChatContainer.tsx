@@ -27,9 +27,11 @@ import {
   addRoomMessage,
   changeRoomName,
   removeRoom,
+  selectRoom,
   setRoomMessages,
 } from "src/core/features/user/userSlice";
 import { useDispatch } from "react-redux";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 const ChatContainer = ({ socket }: any) => {
   const selectedRoom: string = useSelector(
     (state: any) => state.user.selectedRoomID
@@ -39,7 +41,7 @@ const ChatContainer = ({ socket }: any) => {
     (room: IRoom) => room._id === selectedRoom
   );
   const [isModerator, setIsModerator] = useState<boolean>(false);
-
+  const [isMenuOpen, setIsMenuOpen] = useState<Boolean>(false);
   const [messages, setMessages] = useState<IMessage[]>(Room.messages);
   const [inputValue, setInputValue] = useState<string>("");
   const [getRoomMessage, { isLoading, isSuccess }] =
@@ -59,10 +61,6 @@ const ChatContainer = ({ socket }: any) => {
       toast.error("refresh the page!");
     }
   };
-
-  useEffect(() => {
-    console.log(Room);
-  }, [Room.messages]);
 
   useEffect(() => {
     document.title = `Chatter - ${Room.name}`;
@@ -174,7 +172,12 @@ const ChatContainer = ({ socket }: any) => {
           <Wrapper>
             <Chat>
               <ChatHeader>
-                <ChatHeaderImg />
+                <XMarkIcon
+                  className="mr-3 text-black dark:text-white md:hidden"
+                  width={24}
+                  onClick={() => dispatch(selectRoom(null))}
+                />
+                <ChatHeaderImg onClick={() => setIsMenuOpen(true)} />
                 <ChatHeaderName>{Room.name}</ChatHeaderName>
                 <Menu
                   as="div"
@@ -284,7 +287,12 @@ const ChatContainer = ({ socket }: any) => {
               </ChatInputWrapper>
             </Chat>
           </Wrapper>
-          <RoomBar RoomID={Room._id} socket={socket} />
+          <RoomBar
+            RoomID={Room._id}
+            socket={socket}
+            isMenuOpen={isMenuOpen}
+            setIsMenuOpen={setIsMenuOpen}
+          />
         </>
       )}
     </>
@@ -300,8 +308,8 @@ const ChatHeaderImg = tw(
 const ChatHeaderName = tw.h3`font-Inter font-bold text-xl dark:text-white`;
 const ChatBody = tw.div` flex flex-col h-full`;
 const Messages = tw.div`h-full flex flex-col scrollbar-thumb-my-light-purple/[.40] scrollbar-track-transparent scrollbar-thin scrollbar-thumb-rounded-md flex-[1_1_0] px-6 pb-0 pt-3`;
-const MyMessage = tw.div` py-3 px-5 text-white  bg-my-light-purple text-sm self-end rounded-2xl max-w-[50%] mb-4 last:mb-0`;
-const MemberMessage = tw.div`max-w-[50%] py-3 px-5 text-black bg-gray-300 rounded-2xl self-start mb-4 last:mb-0`;
+const MyMessage = tw.div` py-3 px-5 text-white  bg-my-light-purple text-sm self-end rounded-2xl max-w-[50%] mb-4 last:mb-0 break-words`;
+const MemberMessage = tw.div`max-w-[50%] py-3 px-5 text-black bg-gray-300 rounded-2xl self-start mb-4 last:mb-0 break-words`;
 const SenderMessage = tw.h5`text-xs font-bold mb-2`;
 const MessageBody = tw.p`font-Inter`;
 const ChatInputWrapper = tw.div`w-full relative px-6 py-4`;

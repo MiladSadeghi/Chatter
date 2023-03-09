@@ -4,9 +4,8 @@ import {
   XCircleIcon,
 } from "@heroicons/react/24/outline";
 import { PlusSmallIcon } from "@heroicons/react/24/solid";
-import React, { useEffect } from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
   addToInviteList,
   removeRoom,
@@ -24,12 +23,15 @@ import {
 import { toggleCreateRoomModal } from "src/core/features/user/userSlice";
 import { TUserInviteList } from "src/ts/types/user.types";
 import { toast } from "react-toastify";
+import styled from "styled-components";
+import useMediaQuery from "src/hooks/useMediaQuery";
 
 const RoomList = ({ socket }: any) => {
   const user: IUser = useSelector((state: any) => state.user);
   const dispatch: AppDispatch = useDispatch();
   const [acceptRoomInvite] = useAcceptRoomInviteMutation();
   const [ignoreRoomInvite] = useIgnoreRoomInviteMutation();
+  const mediaQueryDesktop = useMediaQuery("(max-width:1024px)");
 
   const roomHandler = (roomID: string) => {
     dispatch(selectRoom(roomID));
@@ -148,7 +150,11 @@ const RoomList = ({ socket }: any) => {
   );
 };
 
-const Wrapper = tw.div`min-w-[20%] h-full border-r flex flex-col dark:bg-[#1c1d26]`;
+// const Wrapper = tw.div` `;
+const Wrapper = styled.div`
+  ${tw`h-full border-r flex flex-col dark:bg-[#1c1d26] w-full`}
+`;
+
 const Header = tw.div`p-5 flex items-center justify-between border-b`;
 const HeaderText = tw.h5`font-Inter font-semibold text-xl dark:text-white`;
 const HeaderCreateRoomLogo = tw(

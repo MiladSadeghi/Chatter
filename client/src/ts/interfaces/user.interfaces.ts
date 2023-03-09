@@ -10,5 +10,5 @@ export interface IUser {
   userName: string | null,
   userID: string | null,
   isCreateRoomModalShow: Boolean,
-  messages: IMessage[]
+  messages: IMessage[],
 }

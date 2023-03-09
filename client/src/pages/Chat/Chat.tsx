@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import tw from "twin.macro";
 import ChatContainer from "./components/ChatContainer";
@@ -18,11 +18,13 @@ import {
 } from "src/core/features/user/userSlice";
 import { toast } from "react-toastify";
 import { IMessage } from "src/ts/interfaces/message.interfaces";
+import useMediaQuery from "src/hooks/useMediaQuery";
+import styled from "styled-components";
 
 let socket: any;
 
 const Chat = () => {
-  const selectedRoom: null | string = useSelector(
+  const selectedRoom: any = useSelector(
     (state: any) => state.user.selectedRoomID
   );
   const currentUserID = useSelector((state: any) => state.user.userID);
@@ -30,6 +32,8 @@ const Chat = () => {
     (state: any) => state.user.isCreateRoomModalShow
   );
   const dispatch = useDispatch();
+  const [isRoomListOpen, setIsRoomListOpen] = useState(true);
+  const mediaQueryTablet = useMediaQuery("(max-width:768px)");
   socket = io("http://localhost:3001");
 
   useEffect(() => {
@@ -85,8 +89,14 @@ const Chat = () => {
 
   return (
     <Wrapper>
-      <ProfileBar />
-      <RoomList socket={socket} />
+      <LeftBars selectedRoom={selectedRoom}>
+        <ProfileBar />
+        <RoomList
+          socket={socket}
+          isRoomListOpen={isRoomListOpen}
+          setIsRoomListOpen={setIsRoomListOpen}
+        />
+      </LeftBars>
       {selectedRoom && <ChatContainer socket={socket} />}
       <AnimatePresence>
         {isCreateRoomModalOpen && <CreateRoomModal />}
@@ -95,6 +105,11 @@ const Chat = () => {
   );
 };
 
-const Wrapper = tw.div`flex h-screen dark:bg-[#171821]`;
+const Wrapper = tw.div`flex h-screen dark:bg-[#171821] relative z-10`;
+const LeftBars = styled.div`
+  ${tw`absolute left-0 z-20 flex h-full w-full md:relative md:w-[50%] lg:w-[40%] xl:w-[40%]`}
+  ${({ selectedRoom }: { selectedRoom: Boolean }) =>
+    selectedRoom ? tw`hidden md:flex` : tw``}
+`;
 
 export default Chat;

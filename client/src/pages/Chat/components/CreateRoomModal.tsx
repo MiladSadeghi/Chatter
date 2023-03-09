@@ -79,12 +79,12 @@ const CreateRoomModal = () => {
   );
 };
 
-const Main = tw.div`absolute h-full w-full bg-gray-600/[0.8]`;
+const Main = tw.div`absolute h-full w-full bg-gray-600/[0.8] z-20`;
 const Wrapper = tw(motion.div)`container mx-auto`;
 const Modal = tw.div`w-[420px] max-w-full mx-auto mt-8 `;
-const ModalHeader = tw.div`py-2 px-4 bg-white rounded-t-lg border-b border-gray-300 flex justify-between items-center`;
-const ModalBody = tw.div`flex flex-col py-2 px-4 bg-white rounded-b-lg`;
-const ModalInput = tw.input`border border-solid rounded border-gray-300 mt-2 px-2`;
+const ModalHeader = tw.div`py-2 px-4 bg-white rounded-t-lg border-b border-gray-300 flex justify-between items-center dark:bg-[#171821] dark:text-white`;
+const ModalBody = tw.div`flex flex-col py-2 px-4 bg-white rounded-b-lg dark:bg-[#171821] dark:text-white`;
+const ModalInput = tw.input`border border-solid rounded border-gray-300 mt-2 px-2 dark:bg-[#585c7d] dark:text-white`;
 const ModalButton = tw.button`mt-2 w-full py-1 bg-my-light-purple text-white font-Inter rounded-lg cursor-pointer disabled:opacity-50 flex justify-center items-center font-light`;
 
 export default CreateRoomModal;

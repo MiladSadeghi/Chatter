@@ -1,7 +1,6 @@
 import { useSelector } from "react-redux";
 import tw from "twin.macro";
 import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
-import { useState } from "react";
 import DarkModeButton from "src/common/DarkModeButton";
 
 const ProfileBar = () => {
