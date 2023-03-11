@@ -17,7 +17,9 @@ const Account = ({ children }: any) => {
       {spacePercentage.map((space: string, index: number) => (
         <Line className={`${space}`} key={index}></Line>
       ))}
-      <div className="z-30">{children}</div>
+      <div className="z-30 flex h-full w-full flex-col items-center justify-center">
+        {children}
+      </div>
     </div>
   );
 };

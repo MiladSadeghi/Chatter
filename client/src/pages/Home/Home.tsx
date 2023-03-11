@@ -17,6 +17,6 @@ const Home = () => {
   );
 };
 
-const Wrapper = tw.div`h-full bg-cover bg-no-repeat pb-[400px] mb-[580px] h-[1280px]`;
+const Wrapper = tw.div`h-full bg-cover bg-no-repeat lg:pb-[400px] lg:mb-[580px] lg:bg-[0_-300px] pb-4 mb-4`;
 
 export default Home;

@@ -2,9 +2,15 @@ import tw from "twin.macro";
 import route from "../../animation/route";
 import { motion } from "framer-motion";
 
-const RouteWrapper = ({ children }: any) => {
+const RouteWrapper = ({ children, className }: any) => {
   return (
-    <Wrapper variants={route} initial="initial" animate="shown" exit="exit">
+    <Wrapper
+      className={`${className}`}
+      variants={route}
+      initial="initial"
+      animate="shown"
+      exit="exit"
+    >
       {children}
     </Wrapper>
   );

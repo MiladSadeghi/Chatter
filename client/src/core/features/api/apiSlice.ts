@@ -20,7 +20,7 @@ const baseQueryWithReauth = async (args: any, api: any, extraOptions: any) => {
       result = await baseQuery(args, api, extraOptions);
     } else {
       await baseQuery('api/auth/logout', api, extraOptions);
-      api.dispatch(logOut());
+      api.dispatch(logOut({ token: null, authStatus: false }))
     }
   }
   return result;

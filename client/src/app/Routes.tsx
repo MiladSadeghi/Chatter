@@ -9,9 +9,12 @@ import Prefetch from "src/core/features/auth/Prefetch";
 import Layout from "src/common/Layout";
 import PersistLogin from "src/core/features/auth/PersistLogin";
 import Chat from "src/pages/Chat";
+import { useSelector } from "react-redux";
+import { userIsAuthenticated } from "src/core/features/auth/authSlice";
 
 const Routes = () => {
   const location = useLocation();
+  const isAuthenticated = useSelector(userIsAuthenticated);
 
   useEffect(() => {
     window.scrollTo({ top: 0 });
@@ -21,24 +24,24 @@ const Routes = () => {
     <AnimatePresence mode="wait">
       <RouterRoutes location={location} key={location.pathname}>
         <Route path="/" element={<Layout />}>
-          <Route index element={<Home />} />
-          <Route
-            path="sign-in"
-            element={
-              <Account>
-                <SignIn />
-              </Account>
-            }
-          />
-          <Route
-            path="sign-up"
-            element={
-              <Account>
-                <SignUp />
-              </Account>
-            }
-          />
           <Route element={<PersistLogin />}>
+            <Route index element={<Home />} />
+            <Route
+              path="sign-in"
+              element={
+                <Account>
+                  <SignIn />
+                </Account>
+              }
+            />
+            <Route
+              path="sign-up"
+              element={
+                <Account>
+                  <SignUp />
+                </Account>
+              }
+            />
             <Route element={<Prefetch />}>
               <Route path="/chat" element={<Chat />} />
             </Route>

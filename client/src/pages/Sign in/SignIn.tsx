@@ -67,9 +67,9 @@ const SignIn = () => {
   });
 
   return (
-    <RouteWrapper>
+    <RouteWrapper className="overflow-scroll">
       <Wrapper>
-        <div className="w-[454px] bg-white px-8 py-12 font-Mulish drop-shadow-md">
+        <div className="mx-auto w-full bg-white px-8 py-12 font-Mulish drop-shadow-md sm:w-[454px]">
           <p className="text-sm font-light text-my-dark-gray">
             Welcome back! 👋
           </p>
@@ -131,7 +131,7 @@ const SignIn = () => {
   );
 };
 
-const Wrapper = tw.div`container mx-auto`;
+const Wrapper = tw.div`container mx-auto h-full overflow-scroll`;
 const Input = tw.input`h-[45px] w-full rounded-lg border border-solid border-my-gray px-4`;
 const SubmitButton = tw.button`h-[45px] bg-gradient-to-b from-[#625BF7] to-[#463EEA] w-full font-extrabold text-base text-white rounded-md flex justify-center items-center`;
 const ErrorMessage = tw.p`text-red-600`;

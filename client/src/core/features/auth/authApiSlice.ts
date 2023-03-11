@@ -44,7 +44,6 @@ const authApiSlice = apiSlice.injectEndpoints({
           dispatch(setCredentials({ userID: decodedAccessToken._id, userName: decodedAccessToken.userName }))
           dispatch(setToken({ accessToken }))
         } catch (err) {
-          toast.error("Sorry! you must login again!.")
         }
       }
     }),
@@ -56,7 +55,6 @@ const authApiSlice = apiSlice.injectEndpoints({
       async onQueryStarted(arg, { dispatch, queryFulfilled }) {
         try {
           await queryFulfilled;
-          dispatch(logOut())
           toast.success("logged out successfully")
         } catch (error) { }
       }

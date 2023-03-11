@@ -4,15 +4,19 @@ import { ArrowRightOnRectangleIcon } from "@heroicons/react/24/outline";
 import DarkModeButton from "src/common/DarkModeButton";
 import { useLogoutMutation } from "src/core/features/auth/authApiSlice";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { logOut } from "src/core/features/auth/authSlice";
 
 const ProfileBar = () => {
   const userName = useSelector((state: any) => state.user.userName);
   const [logout] = useLogoutMutation();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleLogout = async () => {
     try {
       await logout();
+      dispatch(logOut({ token: null, authStatus: false }));
       navigate("/", { replace: true });
     } catch (error) {}
   };

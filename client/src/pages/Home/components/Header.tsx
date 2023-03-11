@@ -29,12 +29,12 @@ const Header = () => {
       <p className="mt-10 text-center font-DMSans text-2xl font-light text-my-gray">
         Compatible with all OS in the world
       </p>
-      <div className="mt-12 mb-[90px] flex items-center justify-center space-x-6">
+      <div className="mt-12 flex items-center justify-center space-x-6 lg:mb-[90px]">
         <img src={Apple} alt="" />
         <img src={Android} alt="" />
         <img src={Windows} alt="" />
       </div>
-      <div className="relative">
+      <div className="relative hidden lg:flex">
         <div className="absolute top-0 h-[800px] w-full rounded-xl bg-[url('/src/assets/home-chat-background.jpg')] bg-cover drop-shadow-2xl">
           <img
             className="mx-auto mt-[110px] h-[95%] w-[80%] rounded-xl drop-shadow-xl"
@@ -48,5 +48,5 @@ const Header = () => {
 };
 
 const Wrapper = tw.div`container mx-auto`;
-const Button = tw.button`py-3 flex items-center justify-center   rounded-lg text-white font-DMSans text-xl w-48`;
+const Button = tw.button`py-3 flex items-center justify-center rounded-lg text-white font-DMSans text-xl w-48`;
 export default Header;

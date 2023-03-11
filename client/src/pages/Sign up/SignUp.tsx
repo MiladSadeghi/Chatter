@@ -62,9 +62,9 @@ const SignUp = () => {
   }
 
   return (
-    <RouteWrapper>
+    <RouteWrapper className="overflow-scroll">
       <Wrapper>
-        <div className="w-[454px] bg-white px-8 py-12 font-Mulish drop-shadow-md">
+        <div className="mx-auto w-full bg-white px-8 py-12 font-Mulish drop-shadow-md sm:w-[454px]">
           <p className="text-sm font-light text-my-dark-gray">Hi! 👋</p>
           <h5 className="mb-7 text-2xl font-bold">Create your account</h5>
           <form onSubmit={handleSubmit}>

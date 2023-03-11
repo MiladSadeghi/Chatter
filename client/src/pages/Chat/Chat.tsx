@@ -20,6 +20,7 @@ import { toast } from "react-toastify";
 import { IMessage } from "src/ts/interfaces/message.interfaces";
 import useMediaQuery from "src/hooks/useMediaQuery";
 import styled from "styled-components";
+import RouteWrapper from "src/common/RouteWrapper";
 
 let socket: any;
 
@@ -88,20 +89,22 @@ const Chat = () => {
   }, []);
 
   return (
-    <Wrapper>
-      <LeftBars selectedRoom={selectedRoom}>
-        <ProfileBar />
-        <RoomList
-          socket={socket}
-          isRoomListOpen={isRoomListOpen}
-          setIsRoomListOpen={setIsRoomListOpen}
-        />
-      </LeftBars>
-      {selectedRoom && <ChatContainer socket={socket} />}
-      <AnimatePresence>
-        {isCreateRoomModalOpen && <CreateRoomModal />}
-      </AnimatePresence>
-    </Wrapper>
+    <RouteWrapper>
+      <Wrapper>
+        <LeftBars selectedRoom={selectedRoom}>
+          <ProfileBar />
+          <RoomList
+            socket={socket}
+            isRoomListOpen={isRoomListOpen}
+            setIsRoomListOpen={setIsRoomListOpen}
+          />
+        </LeftBars>
+        {selectedRoom && <ChatContainer socket={socket} />}
+        <AnimatePresence>
+          {isCreateRoomModalOpen && <CreateRoomModal />}
+        </AnimatePresence>
+      </Wrapper>
+    </RouteWrapper>
   );
 };
 
