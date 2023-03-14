@@ -9,7 +9,7 @@ const handleLogin = async (req, res) => {
     res.cookie('jwt', refreshToken, { ...createTokenOptions(), maxAge: 24 * 60 * 60 * 1000 });
     res.status(201).json({ accessToken })
   } catch (error) {
-    res.sendStatus(401);
+    res.status(401).json({ status: "error", message: "something bad happens" });
   }
 }
 

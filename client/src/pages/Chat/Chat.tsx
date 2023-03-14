@@ -18,7 +18,6 @@ import {
 } from "src/core/features/user/userSlice";
 import { toast } from "react-toastify";
 import { IMessage } from "src/ts/interfaces/message.interfaces";
-import useMediaQuery from "src/hooks/useMediaQuery";
 import styled from "styled-components";
 import RouteWrapper from "src/common/RouteWrapper";
 
@@ -34,8 +33,7 @@ const Chat = () => {
   );
   const dispatch = useDispatch();
   const [isRoomListOpen, setIsRoomListOpen] = useState(true);
-  const mediaQueryTablet = useMediaQuery("(max-width:768px)");
-  socket = io("http://localhost:3001");
+  socket = io(String(process.env.REACT_APP_BASE_URL));
 
   useEffect(() => {
     document.title = "Chatter";

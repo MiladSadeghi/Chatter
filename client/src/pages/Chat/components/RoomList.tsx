@@ -24,14 +24,12 @@ import { toggleCreateRoomModal } from "src/core/features/user/userSlice";
 import { TUserInviteList } from "src/ts/types/user.types";
 import { toast } from "react-toastify";
 import styled from "styled-components";
-import useMediaQuery from "src/hooks/useMediaQuery";
 
 const RoomList = ({ socket }: any) => {
   const user: IUser = useSelector((state: any) => state.user);
   const dispatch: AppDispatch = useDispatch();
   const [acceptRoomInvite] = useAcceptRoomInviteMutation();
   const [ignoreRoomInvite] = useIgnoreRoomInviteMutation();
-  const mediaQueryDesktop = useMediaQuery("(max-width:1024px)");
 
   const roomHandler = (roomID: string) => {
     dispatch(selectRoom(roomID));

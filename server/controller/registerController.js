@@ -13,6 +13,7 @@ const handleRegister = async (req, res) => {
     })
     res.status(201).json({ "status": "success", "message": "new user created" });
   } catch (error) {
+    console.log(error)
     res.status(500).json({ "status": "unsuccess", "message": error.message })
   }
 
