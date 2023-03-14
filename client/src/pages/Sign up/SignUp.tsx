@@ -62,7 +62,7 @@ const SignUp = () => {
   }
 
   return (
-    <RouteWrapper className="overflow-scroll">
+    <RouteWrapper className="overflow-hidden">
       <Wrapper>
         <div className="mx-auto w-full bg-white px-8 py-12 font-Mulish drop-shadow-md sm:w-[454px]">
           <p className="text-sm font-light text-my-dark-gray">Hi! 👋</p>
@@ -158,7 +158,7 @@ const SignUp = () => {
   );
 };
 
-const Wrapper = tw.div`container mx-auto`;
+const Wrapper = tw.div`container mx-auto overflow-hidden`;
 const Input = tw.input`h-[45px] w-full rounded-lg border border-solid border-my-gray px-4`;
 const SubmitButton = tw.button`h-[45px] bg-gradient-to-b from-[#625BF7] to-[#463EEA] w-full font-extrabold text-base text-white rounded-md flex justify-center items-center`;
 const ErrorMessage = tw.p`text-red-600`;

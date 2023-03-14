@@ -1,14 +1,15 @@
 <p align="center">
   <a href="" rel="noopener">
- <img width=200px height=200px src="https://i.imgur.com/FxL5qM0.jpg" alt="Bot logo"></a>
+ <img src="https://s2.uupload.ir/files/chatter_3h9e.png" alt="logo"></a>
 </p>
 
 <h3 align="center">Chatter</h3>
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-active-success.svg)]()
+[![Status](https://img.shields.io/badge/status-active-blue.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-blue.svg)](/LICENSE)
+[![Langugae](https://img.shields.io/github/languages/top/miladsadeghi/Chatter)]()
 
 </div>
 
@@ -24,7 +25,6 @@
 - [How it works](#working)
 - [Usage](#usage)
 - [Getting Started](#getting_started)
-- [Demo](#demo)
 - [Authors](#authors)
 
 ## 🧐 About <a name = "about"></a>
@@ -84,13 +84,6 @@ You can have this application up and running with just a few steps because it ha
 4. This application uses MongoDB as its Database. So make sure you have it installed. You can find detailed guides on how to do so here. Once installed, make sure that your local MongoDB server is not protected by any kind of authentication.
 5. Finally, all you have to do is simply run npm run dev for backend and npm start for frontend.
 6. The frontend of the application will be automatically opened in your web browser and you can test it away.
-
-## 🎬 Demo <a name="demo"></a>
-
-<details>
-           <summary>Home Page</summary>
-           <img src="" />
-         </details>
 
 ## ✍️ Authors <a name = "authors"></a>
 
