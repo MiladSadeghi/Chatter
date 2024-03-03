@@ -31,10 +31,10 @@
 
 A Chat Application using MERN stack (MongoDB, Express JS, React JS (Typescript, Tailwind), Node JS) and Socket.io for real time chatting. just enjoy dark mode :).
 
-
 ## 💭 How it works <a name = "working"></a>
 
 ### MVP
+
 As a user, I can
 
 - sign up / sign in / sign out
@@ -88,3 +88,15 @@ You can have this application up and running with just a few steps because it ha
 ## ✍️ Authors <a name = "authors"></a>
 
 - [@MiladSadeghi](https://github.com/MiladSadeghi) - Idea & Initial work
+
+## Install mongo via docker
+
+```
+docker pull mongodb/mongodb-community-server
+docker run -p 127.0.0.1:27017:27017 --name mongo -d mongodb/mongodb-community-server:latest
+docker container ls
+docker exec -it mongo ls
+docker exec -it mongo mongosh
+use chatter
+db.createUser({ user: "chatterAdmin", pwd: passwordPrompt(), roles: [ "readWrite", "dbAdmin" ] });
+```
